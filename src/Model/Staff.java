@@ -5,6 +5,7 @@ public class Staff {
 	private static int mGenerateId = 1000;
 	private int mId;
 	private String mPosition;
+	private int mSales;
 	public Staff(String name,String position){
 		this.mName = name;
 		this.mPosition = position;
@@ -15,5 +16,5 @@ public class Staff {
 	public int getId(){return mId;}
 	public String getPosition(){return mPosition;}
 	public boolean isSupervisor(){return mPosition.equals("Supervisor");}
-	
+	public void addSales(int sales){mSales += sales;}
 }

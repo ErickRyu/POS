@@ -23,14 +23,16 @@ public class POS {
 	Map<String, Menu> mMenuMap;
 	Map<String, Customer> mCustomerMap;
 
-	/* Save order information per table */
-	Map<Integer, TableInfo> mTableMap;
 	
-	/* Table Info inner class to save order information per table*/
+	Map<Integer, TableInfo> mTableMap;		/* Save order information per table */
+	
+	/* Table Info class to save order information per table*/
 	private class TableInfo{
-		int mTotalOrderPrice;
-		Map<String, Integer> mOrderMap;
+		String mCustomerName;				/* Save customer who order menu at that table*/
+		int mTotalOrderPrice;				/* Save total order price */
+		Map<String, Integer> mOrderMap;		/* Map to save order menu and each order number*/
 		public TableInfo(){
+			mCustomerName = "비회원";			/* Default customer name is 비회원  */
 			mTotalOrderPrice = 0;
 			mOrderMap = new HashMap<>();
 		}
@@ -110,7 +112,8 @@ public class POS {
 			System.out.println("\t2. Add");
 			System.out.println("\t3. Order");
 			System.out.println("\t4. Purchase");
-			System.out.println("\t5. Exit");
+			System.out.println("\t5. Logout");
+			System.out.println("\t6. Exit");
 			int command = sc.nextInt();
 			int res = -1;
 			switch (command) {
@@ -130,6 +133,9 @@ public class POS {
 				res = purchase(sc);
 				break;
 			case 5:
+				mLoginStaffName = null;
+				break;
+			case 6:
 				break outer;
 			default:
 				mCurrentErrorMessage = "Check command";
@@ -142,9 +148,19 @@ public class POS {
 	
 	public int order(Scanner sc){
 		int res = -1;
+		if(mLoginStaffName == null){
+			mCurrentErrorMessage = "Please login first";
+			return res;
+		}
 		
 		System.out.println("Input table number");
 		int tableNum = sc.nextInt();
+		
+		System.out.println("Input customer name");
+		String customerName = sc.next();
+		//customer name 이 데이터베이스에 없을 시 비회원으로 저장
+		if (mCustomerMap.get(customerName) == null)
+			customerName = "비회원";
 		
 		TableInfo tableInfo = mTableMap.get(tableNum);
 		if(tableInfo == null){
@@ -173,18 +189,23 @@ public class POS {
 		int command = sc.nextInt();
 		boolean ok = (command == 1)? true : false;
 		if(ok){
+			tableInfo.mCustomerName = customerName;
 			tableInfo.mTotalOrderPrice += totalOrderPrice;
 			tableInfo.mOrderMap = orderMap;
 			mTableMap.put(tableNum, tableInfo);
-			System.out.println(tableInfo.mTotalOrderPrice);
+			System.out.println("Total price : " + tableInfo.mTotalOrderPrice);
 		}
-		
+		res = 1;
 		return res;
 	}
 	
 	public int purchase(Scanner sc){
 		int res = -1;
-		/* Test Dummy Data */
+		
+		if(mLoginStaffName == null){
+			mCurrentErrorMessage = "Please login first";
+			return res;
+		}
 		
 		System.out.println("Input table number");
 		int tableNum = sc.nextInt();
@@ -200,13 +221,25 @@ public class POS {
 		
 		
 		sales.addSale(mToday, orderMenuMap, totalSale);
+		
 		mTableMap.remove(tableNum);
+		
+		String customerName = tableInfo.mCustomerName;
+		System.out.println("Customer name : " + customerName);
+		
+		// 해당 고객의 totalpurchase up
+		mCustomerMap.get(customerName).addPurchase(totalSale);
+		mCustomerMap.get(customerName).upgrade();
+		
+		// 로그인한 스태프의 실적 up
+		mStaffMap.get(mLoginStaffName).addSales(totalSale);
+		
+		System.out.println("Today's total purchase : " + sales.getTotalSale());
+		// 가장 많이 팔린 제품과 가장 적게 팔린 제품들이 같은 갯수로 중복 될 경우 처리를 해줘야함.
+		System.out.println("Today's Most sales : " + sales.getMostSales(mToday));
+		System.out.println("Today's Least sales : " + sales.getLeastSales(mToday));
+		
 		res = 1;
-		
-		System.out.println(sales.getTotalSale());
-		System.out.println(sales.getMostSales(mToday));
-		System.out.println(sales.getLeastSales(mToday));
-		
 		return res;
 	}
 	public int login(Scanner sc) {

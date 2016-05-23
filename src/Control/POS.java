@@ -169,36 +169,62 @@ public class POS {
 		
 		Map<String, Integer> orderMap = new HashMap<>(tableInfo.mOrderMap);
 		
-		
-		System.out.println("Input menu name");
-		String menuName = sc.next();
-		System.out.println("Input menu number");
-		int menuNum = sc.nextInt();
-		System.out.println("Input total sale");
-		int totalOrderPrice = sc.nextInt();
-		
-		if(orderMap.get(menuName) == null){
+		int totalOrderPrice = tableInfo.mTotalOrderPrice;
+		while(true){
+			System.out.println("1. More Order \n2. Enough");
+			int cont = sc.nextInt();
+			if(cont==2)break;
+			
+			System.out.println("Input menu name");
+			String menuName = sc.next();
+			
+			int menuNum = 1;
+			if(orderMap.get(menuName) != null){
+				menuNum = orderMap.get(menuName) + 1;
+			}
 			orderMap.put(menuName, menuNum);
-		}else{
-			orderMap.put(menuName, orderMap.get(menuName) + menuNum);
+			
+			totalOrderPrice += mMenuMap.get(menuName).getPrice();
+			showOrderStatus(orderMap);
 		}
-		
-		
 		
 		System.out.println("1. Order\n2. Cancle");
 		int command = sc.nextInt();
 		boolean ok = (command == 1)? true : false;
 		if(ok){
 			tableInfo.mCustomerName = customerName;
-			tableInfo.mTotalOrderPrice += totalOrderPrice;
+			tableInfo.mTotalOrderPrice = totalOrderPrice;
 			tableInfo.mOrderMap = orderMap;
 			mTableMap.put(tableNum, tableInfo);
 			System.out.println("Total price : " + tableInfo.mTotalOrderPrice);
+		}else{
+			mTableMap.remove(tableNum);
 		}
+		showTableStatus();
 		res = 1;
 		return res;
 	}
 	
+	/*	tmp method for show table status */
+	public void showTableStatus(){
+		for(int i = 0; i < 20; i++){
+			if(i%5 ==0 )System.out.println();
+			String empty = " ";
+			if(mTableMap.get(i+1)!= null){
+				empty = "*";
+			}
+			System.out.print(empty + (i+1) + "\t");
+		}
+	}
+	/* Show order status */
+	public void showOrderStatus(Map<String, Integer> orderMap){
+		System.out.println();
+		for(Entry<String, Integer> entry : orderMap.entrySet()){
+			String menuName = entry.getKey();
+			int totalMenuPrice = mMenuMap.get(menuName).getPrice() * entry.getValue();
+			System.out.format("%10s%10d\n", menuName, totalMenuPrice);
+		}
+	}
 	public int purchase(Scanner sc){
 		int res = -1;
 		
@@ -238,6 +264,8 @@ public class POS {
 		// 가장 많이 팔린 제품과 가장 적게 팔린 제품들이 같은 갯수로 중복 될 경우 처리를 해줘야함.
 		System.out.println("Today's Most sales : " + sales.getMostSales(mToday));
 		System.out.println("Today's Least sales : " + sales.getLeastSales(mToday));
+		
+		showTableStatus();
 		
 		res = 1;
 		return res;

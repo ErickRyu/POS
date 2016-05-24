@@ -17,4 +17,5 @@ public class Staff {
 	public String getPosition(){return mPosition;}
 	public boolean isSupervisor(){return mPosition.equals("Supervisor");}
 	public void addSales(int sales){mSales += sales;}
+	public int getSales(){return mSales;}
 }

@@ -54,6 +54,7 @@ public class Sales {
 	}
 	
 	public int getTotalSaleDay(String date){
+		if(mSaleMap.get(date) == null)return 0;
 		return mSaleMap.get(date).mTotalSale;
 	}
 	

@@ -10,7 +10,7 @@ import Model.Customer;
 import Model.Menu;
 import Model.Sale;
 import Model.Staff;
-import Model.TableInfo;
+import Model.Table;
 
 public class POS {
 	// member 변수 앞에는 m을 붙이는 것.
@@ -24,9 +24,7 @@ public class POS {
 	Map<String, Customer> mCustomerMap;
 
 	
-	Map<Integer, TableInfo> mTableMap;		/* Save order information per table */
-	
-	String mToday = "";
+	Map<Integer, Table> mTableMap;		/* Save order information per table */
 	
 	Sale mSale;
 	String mCurrentErrorMessage = "";
@@ -37,7 +35,6 @@ public class POS {
 		mCustomerMap = new HashMap<String, Customer>();
 		mSale = new Sale();
 		mTableMap = new HashMap<>();
-		mToday = "0523";
 		readData();
 		listenCommand();
 	}
@@ -91,6 +88,7 @@ public class POS {
 	public void listenCommand() {
 		Scanner sc = new Scanner(System.in, "euc-kr");
 		Command command = new Command(this);
+		SaleControl saleCtr = new SaleControl(this);
 		outer: while (true) {
 			System.out.println();
 			System.out.println("Input command");
@@ -105,7 +103,7 @@ public class POS {
 			int res = -1;
 			switch (input) {
 			case 0:
-				res = command.login(sc);
+				res = login(sc);
 				break;
 			case 1:
 				res = command.search(sc);
@@ -114,10 +112,10 @@ public class POS {
 				res = command.add(sc);
 				break;
 			case 3:
-				res = command.order(sc);
+				res = saleCtr.order(sc);
 				break;
 			case 4: 
-				res = command.purchase(sc);
+				res = saleCtr.purchase(sc);
 				break;
 			case 5:
 				mLoginStaffName = null;
@@ -131,5 +129,51 @@ public class POS {
 				System.out.println(mCurrentErrorMessage);
 		}
 		sc.close();
+	}
+	
+	public int login(Scanner sc) {
+		int res = -1;
+		String name;
+		int id;
+		System.out.println("Input name");
+		name = sc.next();
+		System.out.println("Input id");
+		id = sc.nextInt();
+
+		Staff staff = mStaffMap.get(name);
+
+		if (staff != null) {
+			if (staff.getName().equals(name)) {
+				if (staff.getId() == id) {
+					mLoginStaffName = name;
+					return 1;
+				}
+			}
+		}
+		mCurrentErrorMessage = "Fail to login";
+		return res;
+	}
+
+	public int isLogin(){
+		int res = -1;
+		if(mLoginStaffName == null){
+			mCurrentErrorMessage = "Please login first";
+			return res;
+		}
+		res = 1;
+		return res;
+		
+	}
+
+	public int isLoginStaffSupervisor() {
+		int res = -1;
+		if (mLoginStaffName == null) {
+			mCurrentErrorMessage = "Please login";
+		} else if (!mStaffMap.get(mLoginStaffName).isSupervisor()) {
+			mCurrentErrorMessage = "Only Supervisor can add";
+		} else {
+			res = 1;
+		}
+		return res;
 	}
 }

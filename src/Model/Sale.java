@@ -1,6 +1,9 @@
 package Model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,6 +13,8 @@ public class Sale {
 	int mCumulativeSales;
 	Map<String, Integer> mDaySalesMap;
 	Map<String, Integer> mSalesVolumePerMenuMap;
+	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	
 	public Sale(){
 		mDaySalesMap = new HashMap<>();
 		mSalesVolumePerMenuMap = new HashMap<>();
@@ -20,15 +25,17 @@ public class Sale {
 		if(mDaySalesMap.get(date) == null) return -1;
 		return mDaySalesMap.get(date);
 	}
-	public void addSales(String date, Map<String, Integer> orderMap, int totalSales){
+	public void addSales(Map<String, Integer> orderMap, int totalSales){
+		Date date = new Date();
+		String today = dateFormat.format(date);
 		// Update cumulative sales
 		mCumulativeSales += totalSales;
 		
 		// Update sales per day
-		if(mDaySalesMap.get(date) != null){
-			totalSales += mDaySalesMap.get(date);
+		if(mDaySalesMap.get(today) != null){
+			totalSales += mDaySalesMap.get(today);
 		}
-		mDaySalesMap.put(date, totalSales);
+		mDaySalesMap.put(today, totalSales);
 		
 		// Update sale volume per menu
 		for(Entry<String, Integer>orderEntry : orderMap.entrySet()){
@@ -71,5 +78,10 @@ public class Sale {
 			}
 		}
 		return leastSalesMenuList;
+	}
+	public ArrayList<String> getSaleDates(){
+		ArrayList<String> saleDates = new ArrayList<>();
+		saleDates.addAll(mDaySalesMap.keySet());
+		return saleDates;
 	}
 }

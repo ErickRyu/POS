@@ -69,9 +69,15 @@ public class Command{
 	public int searchPurchase(String searchName) {
 		int res = -1;
 		System.out.println("해당 날짜 판매");
-		System.out.println(mPos.sales.getTotalSaleDay(searchName));
-		System.out.println("누적판매");
-		System.out.println(mPos.sales.getTotalSale());
+		System.out.println(mPos.mSale.getDaySales(searchName));
+		
+		System.out.println("\nMost sales");
+		mPos.mSale.getMostSalesMenu().forEach(System.out::println);
+		System.out.println("\nLeast sales");
+		mPos.mSale.getLeastSalesMenu().forEach(System.out::println);
+		
+		System.out.println("\n누적판매");
+		System.out.println(mPos.mSale.getCumulativeSales());
 		return res;
 	}
 
@@ -260,7 +266,7 @@ public class Command{
 		
 //		String today = Integer.toString(day++);
 		System.out.println("today is " + mPos.mToday);
-		mPos.sales.addSale(mPos.mToday, orderMenuMap, totalSale);
+		mPos.mSale.addSales(mPos.mToday, orderMenuMap, totalSale);
 		
 		mPos.mTableMap.remove(tableNum);
 		
@@ -274,11 +280,6 @@ public class Command{
 		
 		// 로그인한 스태프의 실적 up
 		mPos.mStaffMap.get(mPos.mLoginStaffName).addSales(totalSale);
-		
-		System.out.println("Today's total purchase : " + mPos.sales.getTotalSale());
-		// 가장 많이 팔린 제품과 가장 적게 팔린 제품들이 같은 갯수로 중복 될 경우 처리를 해줘야함.
-		System.out.println("Today's Most sales : " + mPos.sales.getMostSales(mPos.mToday));
-		System.out.println("Today's Least sales : " + mPos.sales.getLeastSales(mPos.mToday));
 		
 		showTableStatus();
 		

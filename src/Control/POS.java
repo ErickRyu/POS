@@ -4,12 +4,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 
 import Model.Customer;
 import Model.Menu;
-import Model.Sales;
+import Model.Sale;
 import Model.Staff;
 import Model.TableInfo;
 
@@ -29,14 +28,14 @@ public class POS {
 	
 	String mToday = "";
 	
-	Sales sales;
+	Sale mSale;
 	String mCurrentErrorMessage = "";
 
 	public POS() {
 		mStaffMap = new HashMap<String, Staff>();
 		mMenuMap = new HashMap<String, Menu>();
 		mCustomerMap = new HashMap<String, Customer>();
-		sales = new Sales();
+		mSale = new Sale();
 		mTableMap = new HashMap<>();
 		mToday = "0523";
 		readData();

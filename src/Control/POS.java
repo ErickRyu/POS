@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import DB.JDBC;
 import Model.Customer;
 import Model.Menu;
 import Model.Sale;
@@ -28,15 +29,22 @@ public class POS {
 	
 	Sale mSale;
 	String mCurrentErrorMessage = "";
-
+	
+	
+	JDBC jdbc;
 	public POS() {
 		mStaffMap = new HashMap<String, Staff>();
 		mMenuMap = new HashMap<String, Menu>();
 		mCustomerMap = new HashMap<String, Customer>();
 		mSale = new Sale();
 		mTableMap = new HashMap<>();
+		
+		
+		jdbc = new JDBC();
 		readData();
 		listenCommand();
+		
+		
 	}
 
 	public void readData() {

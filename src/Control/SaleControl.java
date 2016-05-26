@@ -1,5 +1,7 @@
 package Control;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -9,11 +11,23 @@ import Model.Table;
 
 public class SaleControl {
 	POS mPos;
+	
+	enum DISCOUNT{
+		Gold(.7f), Silver(.8f), Bronze(.9f), Normal(1);
+		float discount;
+		DISCOUNT(float value){
+			this.discount = value;
+		}
+		
+		public float getDiscount(){
+			return this.discount;
+		}
+	}
 	public SaleControl(POS pos){
 		mPos = pos;
 	}
 	
-	public int searchPurchase(String searchName) {
+	public int searchSales(String searchName) {
 		int res = -1;
 		System.out.println("해당 날짜 판매");
 		System.out.println(mPos.mSale.getDaySales(searchName));
@@ -26,6 +40,35 @@ public class SaleControl {
 		System.out.println("\n누적판매");
 		System.out.println(mPos.mSale.getCumulativeSales());
 		res = 0;
+		return res;
+	}
+	
+	/* Search from JDBC */
+	public int searchSalesDB(String searchName) {
+
+		int res = -1;
+		try {
+			String sqlStr = "select * from sale where day = '" + searchName + "'";
+			ResultSet rs = mPos.jdbc.executeQueryAndGetResultSet(sqlStr);
+			rs.next();
+			String name = rs.getString("day");
+			String sales = rs.getString("sales");
+			
+			sqlStr = "select sum(sales) from sale";
+			rs = mPos.jdbc.executeQueryAndGetResultSet(sqlStr);
+			rs.next();
+			String cumulitiveSales = rs.getString("sum(sales");
+			
+			System.out.println("Menu Info");
+			System.out.println(name);
+			System.out.println(sales);
+			System.out.println(cumulitiveSales);
+			
+			res = 1;
+
+		} catch (SQLException e) {
+			mPos.mCurrentErrorMessage = "Not exist";
+		}
 		return res;
 	}
 	
@@ -113,21 +156,28 @@ public class SaleControl {
 			return res;
 		}
 		Map<String, Integer> orderMenuMap = tableInfo.mOrderMap;
+		String customerName = tableInfo.mCustomerName;
 		
+		
+		// Get original totalSale
 		int totalSale = mPos.mTableMap.get(tableNum).mTotalOrderPrice;
+		// discount totalSale using grade
+		String customerGrade = mPos.mCustomerMap.get(customerName).getGrade();
+		float discount = DISCOUNT.valueOf(customerGrade).getDiscount();
+		System.out.println(discount);
+		totalSale *= discount;
 		
-		
-//		String today = Integer.toString(day++);
+		/* Save today's total sales*/
 		mPos.mSale.addSales(orderMenuMap, totalSale);
 		
+		/* Remove table information */
 		mPos.mTableMap.remove(tableNum);
 		
-		String customerName = tableInfo.mCustomerName;
+		
 		System.out.println("Customer name : " + customerName);
 		
 		// 해당 고객의 totalpurchase up
-		mPos.mCustomerMap.get(customerName).addPurchase(totalSale);
-		// 업그레이드 해야 할 경우만 업그레이드 하도록 변경 
+		mPos.mCustomerMap.get(customerName).addPurchase(totalSale); 
 		mPos.mCustomerMap.get(customerName).upgrade();
 		
 		// 로그인한 스태프의 실적 up

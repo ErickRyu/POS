@@ -36,24 +36,24 @@ public class Command{
 		case 1:
 			System.out.println("input name");
 			searchName = sc.next();
-			res = custmCtr.searchCustomer(searchName);
+			res = custmCtr.searchCustomerDB(searchName);
 			
 			break;
 		case 2:
 			showSaleDates();
 			System.out.println("input date");
 			searchName = sc.next();
-			res = saleCtr.searchPurchase(searchName);
+			res = saleCtr.searchSales(searchName);
 			break;
 		case 3:
 			System.out.println("input name");
 			searchName = sc.next();
-			res = staffCtr.searchStaff(searchName);
+			res = staffCtr.searchStaffDB(searchName);
 			break;
 		case 4:
 			System.out.println("input name");
 			searchName = sc.next();
-			res = menuCtr.searchMenu(searchName);
+			res = menuCtr.searchMenuDB(searchName);
 			break;
 		default:
 		}
@@ -78,14 +78,14 @@ public class Command{
 		String addName = sc.next();
 		switch (command) {
 		case 1:
-			res = custmCtr.addCustomer(addName, sc);
+			res = custmCtr.addCustomerDB(addName, sc);
 			
 			break;
 		case 2:
-			res = staffCtr.addStaff(addName, sc);
+			res = staffCtr.addStaffDB(addName, sc);
 			break;
 		case 3:
-			res = menuCtr.addMenu(addName, sc);
+			res = menuCtr.addMenuDB(addName, sc);
 			break;
 		default:
 		}

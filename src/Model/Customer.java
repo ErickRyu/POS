@@ -53,6 +53,7 @@ public class Customer {
 	public int getTotalPurchase(){return mTotalPurchase;}
 	public void addPurchase(int puchase){mTotalPurchase += puchase;}
 	public void upgrade(){
+		if(mName.equals("ºñÈ¸¿ø"))return;
 		if(mTotalPurchase > 1000000){
 			mGrade = "Gold";
 		}else if(mTotalPurchase > 500000){

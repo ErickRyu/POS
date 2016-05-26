@@ -1,5 +1,7 @@
 package Control;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Command{
@@ -40,10 +42,10 @@ public class Command{
 			
 			break;
 		case 2:
-			showSaleDates();
+			showSaleDatesDB();
 			System.out.println("input date");
 			searchName = sc.next();
-			res = saleCtr.searchSales(searchName);
+			res = saleCtr.searchSalesDB(searchName);
 			break;
 		case 3:
 			System.out.println("input name");
@@ -61,6 +63,20 @@ public class Command{
 	}
 	public void showSaleDates(){
 		System.out.println("Chose date");
+		mPos.mSale.getSaleDates().forEach(System.out::println);
+		System.out.println("-----------");
+	}
+	public void showSaleDatesDB(){
+		System.out.println("Chose date");
+		try{
+			String sqlStr = "select distinct(day) from sale";
+			ResultSet rs = mPos.jdbc.executeQueryAndGetResultSet(sqlStr);
+			while(rs.next()){
+				System.out.println(rs.getDate("day"));
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
 		mPos.mSale.getSaleDates().forEach(System.out::println);
 		System.out.println("-----------");
 	}

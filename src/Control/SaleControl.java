@@ -2,16 +2,19 @@ package Control;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Map.Entry;
+import java.util.Scanner;
 
 import Model.Table;
 
 public class SaleControl {
 	POS mPos;
-	
+	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	enum DISCOUNT{
 		Gold(.7f), Silver(.8f), Bronze(.9f), Normal(1);
 		float discount;
@@ -155,6 +158,8 @@ public class SaleControl {
 			mPos.mCurrentErrorMessage = "There is no order infomation";
 			return res;
 		}
+		
+		
 		Map<String, Integer> orderMenuMap = tableInfo.mOrderMap;
 		String customerName = tableInfo.mCustomerName;
 		
@@ -186,6 +191,127 @@ public class SaleControl {
 		showTableStatus();
 		
 		res = 1;
+		return res;
+	}
+	
+	/* Purchas and save into database */
+	public int purchaseDB(Scanner sc){
+		int res = -1;
+
+		
+		if(mPos.isLogin() == -1){
+			return res;
+		}
+		
+		System.out.println("Input table number");
+		int tableNum = sc.nextInt();
+		
+		Table tableInfo = mPos.mTableMap.get(tableNum);
+		if(tableInfo == null){
+			mPos.mCurrentErrorMessage = "There is no order infomation";
+			return res;
+		}
+		
+		
+		Map<String, Integer> orderMenuMap = tableInfo.mOrderMap;
+		String customerName = tableInfo.mCustomerName;
+		
+		
+		// Get original totalSale
+		int totalSale = mPos.mTableMap.get(tableNum).mTotalOrderPrice;
+		// discount totalSale using grade
+//		String customerGrade = mPos.mCustomerMap.get(customerName).getGrade();
+		float discount = getDiscountRate(customerName);
+		System.out.println(discount);
+		totalSale *= discount;
+		
+		/* Save today's total sales*/
+//		mPos.mSale.addSales(orderMenuMap, totalSale);
+		
+		addSale(orderMenuMap, totalSale);
+	
+		
+		/* Remove table information */
+		mPos.mTableMap.remove(tableNum);
+		
+		
+		System.out.println("Customer name : " + customerName);
+		
+		/* customer's total purchase up */
+//		mPos.mCustomerMap.get(customerName).addPurchase(totalSale); 
+//		mPos.mCustomerMap.get(customerName).upgrade();
+		
+		String sqlStr = "update set customer" + 
+				"total_purchase = total_purchase + " + totalSale;
+		try{
+			mPos.jdbc.executeQuery(sqlStr);
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		
+		/* Update Sales of login staff */
+//		mPos.mStaffMap.get(mPos.mLoginStaffName).addSales(totalSale);
+		
+		sqlStr = "update set staff" + 
+				"sales = sales + " + totalSale +
+				"where name = '" + mPos.mLoginStaffName + "'";
+		try{
+			mPos.jdbc.executeQuery(sqlStr);
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		
+		showTableStatus();
+		
+		res = 1;
+		return res;
+	}
+	
+	public int addSale(Map<String, Integer>orderMap, int totalSale){
+		int res = -1;
+		Date date = new Date();
+		String today = dateFormat.format(date);
+		try{
+			//menu update
+			
+			
+			
+			String sqlStr = "update set sale"+
+				"sales = sales + " +totalSale + 
+				"where day = '" + today + "'";
+			mPos.jdbc.executeQuery(sqlStr);
+			res = 1;
+		}catch(SQLException e){
+			System.out.println("fail");
+//			e.printStackTrace();
+		}
+		if(res == 1){
+			return res;
+		}
+		res = -1;
+		
+		try{
+			String sqlStr = "insert into sale values('" + today + "', " + totalSale + ")";
+			mPos.jdbc.executeQuery(sqlStr);
+			res = 1;
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
+	public float getDiscountRate(String customerName){
+		float res = 1f;
+		try{
+			String sqlStr = "select discount from grade customer where name = '" + customerName + "'";
+			ResultSet rs = mPos.jdbc.executeQueryAndGetResultSet(sqlStr);
+			rs.next();
+			res = rs.getFloat("discount");
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
 		return res;
 	}
 	

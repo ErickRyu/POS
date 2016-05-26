@@ -36,26 +36,6 @@ public class MenuControl {
 	}
 	
 	
-	public int addMenu(String addName, Scanner sc) {
-		int res = -1;
-		if (mPos.mMenuMap.size() >= 20) {
-			mPos.mCurrentErrorMessage = "No more add menu. 20 is maximum menu";
-			return res;
-		}
-		if (mPos.mMenuMap.get(addName) != null) {
-			mPos.mCurrentErrorMessage = "Same menu name is already exist";
-			return res;
-		}
-		System.out.println("Input price");
-		int price = sc.nextInt();
-		Menu menu = new Menu(addName, price);
-		mPos.mMenuMap.put(addName, menu);
-		res = 1;
-		return res;
-	}
-	
-	
-	
 	public int addMenuDB(String addName, Scanner sc) {
 		int res = -1;
 		if (searchMenuDB(addName) == 1) {

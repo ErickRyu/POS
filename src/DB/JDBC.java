@@ -65,8 +65,7 @@ public class JDBC {
 		try {
 			String sqlStr = "create table sale("+
 					"day	date	not null,"+
-					"sales	inte"
-					+ "ger	not null,"+
+					"sales	integer	not null,"+
 					"primary key(day)"+
 					")";
 			executeQuery(sqlStr);

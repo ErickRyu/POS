@@ -123,7 +123,7 @@ public class POS {
 				res = saleCtr.order(sc);
 				break;
 			case 4: 
-				res = saleCtr.purchase(sc);
+				res = saleCtr.purchaseDB(sc);
 				break;
 			case 5:
 				mLoginStaffName = null;

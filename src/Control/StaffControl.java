@@ -36,21 +36,6 @@ public class StaffControl {
 		return res;
 	}
 
-	public int addStaff(String addName, Scanner sc) {
-		int res = -1;
-		if (mPos.mStaffMap.get(addName) != null) {
-			mPos.mCurrentErrorMessage = "Same staff name is already exist";
-			return res;
-		}
-		System.out.println("Input position");
-		String position = sc.next();
-		Staff staff = new Staff(addName, position);
-		mPos.mStaffMap.put(addName, staff);
-		res = 1;
-		return res;
-	}
-	
-	
 	public int addStaffDB(String addName, Scanner sc) {
 		int res = -1;
 		if (searchStaffDB(addName) == 1) {

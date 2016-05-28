@@ -20,32 +20,13 @@ public class TablePanel implements ActionListener {
         private int height = 50;
         private int border = 10;
 	    public TablePanel(){
-	        panel.setLayout(null);
-	        tableButton = new JButton[20];
 
-			Border loweredbevel = BorderFactory.createLoweredBevelBorder();
-			TitledBorder title = BorderFactory.createTitledBorder(loweredbevel, "테이블 현황");
-			title.setTitlePosition(TitledBorder.ABOVE_TOP);
-			panel.setBorder(title);
-
-	        for(int i = 0; i < 4; i++){
-	        	for (int j =0; j < 5; j++){
-	        		tableButton[(i*5)+j] = new JButton(""+((i*5)+j+1)+"");
-	        		tableButton[(i*5)+j].setActionCommand(Integer.toString((i*5)+j+1));
-	        		tableButton[(i*5)+j].setBounds(j*width + j*border + 10, i*height + i*border+ 30, width, height);
-	        		tableButton[(i*5)+j].setBackground(Color.WHITE);
-//	        		tableButton[(i*j)+j].setForeground(Color.black);
-	        		panel.add(tableButton[(i*5)+j]);		
-	        		tableButton[(i*5)+j].addActionListener(this);
-	        	}
-	        }
-
-	        frame.add(panel);
-
-	        frame.setTitle("Table Status");
-	        frame.setSize(330, 350);
-	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	        frame.setVisible(true);
+//	        frame.add(tablePane());
+//
+//	        frame.setTitle("Table Status");
+//	        frame.setSize(330, 350);
+//	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//	        frame.setVisible(true);
 	    }
 	    
 	    public void actionPerformed(ActionEvent e){
@@ -64,5 +45,26 @@ public class TablePanel implements ActionListener {
 	    public static void main(String[] args){
 	    	new TablePanel();
 	    }
+	    public JPanel tablePane(){
+	    	panel.setLayout(null);
+	        tableButton = new JButton[20];
 
+			Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+			TitledBorder title = BorderFactory.createTitledBorder(loweredbevel, "테이블 현황");
+			title.setTitlePosition(TitledBorder.ABOVE_TOP);
+			panel.setBorder(title);
+
+	        for(int i = 0; i < 4; i++){
+	        	for (int j =0; j < 5; j++){
+	        		tableButton[(i*5)+j] = new JButton(""+((i*5)+j+1)+"");
+	        		tableButton[(i*5)+j].setActionCommand(Integer.toString((i*5)+j+1));
+	        		tableButton[(i*5)+j].setBounds(j*width + j*border + 10, i*height + i*border+ 30, width, height);
+	        		tableButton[(i*5)+j].setBackground(Color.WHITE);
+//	        		tableButton[(i*j)+j].setForeground(Color.black);
+	        		panel.add(tableButton[(i*5)+j]);		
+	        		tableButton[(i*5)+j].addActionListener(this);
+	        	}
+	        }
+	        return panel;
+	    }
 }

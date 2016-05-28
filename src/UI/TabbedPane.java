@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -32,9 +33,182 @@ public class TabbedPane extends JPanel implements ActionListener {
 	JButton customerAddButton;
 	JButton staffAddButton;
 	JButton menuAddButton;
-	
+	JFrame frame;
 	public TabbedPane() {
-		super(new GridLayout(1, 1));
+//		super(new GridLayout(1, 1));
+//		
+//		frame	= new JFrame("TabbedPane");
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//
+//		// Add content to the window.
+//		frame.add(this, BorderLayout.CENTER);
+//
+//		// Display the window.
+//		frame.pack();
+//		frame.setSize(400, 400);
+//		frame.setVisible(true);
+//		createAndShowGUI();
+		
+	}
+
+	protected JComponent customerPane() {
+		JPanel panel = new JPanel();
+
+		panel.setFont(new Font("필기체", 1, 12));
+		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel);
+		title.setTitlePosition(TitledBorder.ABOVE_TOP);
+		panel.setBorder(title);
+		panel.setLayout(null);
+//		panel.setBounds(10,10,,280);
+//		panel.setSize(200,300);
+		JTextArea resul_area = new JTextArea();
+		JTextField name_field = new JTextField();
+		JScrollPane scroll = new JScrollPane();
+		scroll.setViewportView(resul_area);
+		
+		customerAddButton = new JButton("가입");
+		customerSearchButton = new JButton("조회");
+		JLabel name_label = new JLabel("고객명");
+		
+		customerAddButton.addActionListener(this);
+		customerSearchButton.addActionListener(this);
+		
+		name_label.setBounds(10,10,80,30);
+		name_field.setBounds(10,40,80,30);
+        customerAddButton.setBounds(180,40,65,30);
+        customerSearchButton.setBounds(270,40,65,30);
+        scroll.setBounds(10,80,330,240);
+
+        panel.add(name_label);
+		panel.add(name_field);
+		panel.add(customerAddButton);
+		panel.add(customerSearchButton);
+		panel.add(scroll);
+
+		return panel;
+	}
+
+	protected JComponent salesPane() {
+		JPanel panel = new JPanel();
+
+		panel.setFont(new Font("필기체", 1, 12));
+		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel);
+		title.setTitlePosition(TitledBorder.ABOVE_TOP);
+		panel.setBorder(title);
+		panel.setLayout(null);
+		panel.setBounds(380,80,490,280);
+		JComboBox<String> check_box = new JComboBox<String>();
+		check_box.addItem("2016-05-26");
+		
+		JTextArea resul_area = new JTextArea();
+		JScrollPane scroll = new JScrollPane();
+		scroll.setViewportView(resul_area);
+		
+		JLabel name_label = new JLabel("기간");
+		name_label.setBounds(10,40,80,30);
+		check_box.setBounds(60,40,110,30);
+        scroll.setBounds(10,80,330,240);
+
+        panel.add(name_label);
+		panel.add(check_box);
+		panel.add(scroll);
+
+		return panel;
+	}
+
+	protected JComponent staffPane() {
+		JPanel panel = new JPanel();
+
+		panel.setFont(new Font("필기체", 1, 12));
+		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel);
+		title.setTitlePosition(TitledBorder.ABOVE_TOP);
+		panel.setBorder(title);
+		panel.setLayout(null);
+		panel.setBounds(380,80,490,280);
+		
+		JTextArea resul_area = new JTextArea();
+		JTextField name_field = new JTextField();
+		JScrollPane scroll = new JScrollPane();
+		scroll.setViewportView(resul_area);
+		
+		staffAddButton = new JButton("직원등록");
+		staffAddButton.setMargin(new Insets(0, 0, 0, 0));
+		staffSearchButton = new JButton("조회");
+		staffSearchButton.setMargin(new Insets(0, 0, 0, 0));
+		
+		staffAddButton.addActionListener(this);
+		staffSearchButton.addActionListener(this);
+		
+		JLabel name_label = new JLabel("직원명");
+		name_label.setBounds(10,10,80,30);
+		name_field.setBounds(10,40,80,30);
+		staffAddButton.setBounds(180,40,85,30);
+		staffSearchButton.setBounds(270,40,65,30);
+        scroll.setBounds(10,80,330,240);
+
+        panel.add(name_label);
+		panel.add(name_field);
+		panel.add(staffAddButton);
+		panel.add(staffSearchButton);
+		panel.add(scroll);
+
+		return panel;
+	}
+
+	protected JComponent menuPane() {
+		JPanel panel = new JPanel();
+
+		panel.setFont(new Font("필기체", 1, 12));
+		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel);
+		title.setTitlePosition(TitledBorder.ABOVE_TOP);
+		panel.setBorder(title);
+		panel.setLayout(null);
+		panel.setBounds(380,80,490,280);
+		
+		JTextArea resul_area = new JTextArea();
+		JTextField name_field = new JTextField();
+		JScrollPane scroll = new JScrollPane();
+		scroll.setViewportView(resul_area);
+		
+		menuAddButton = new JButton("메뉴등록");
+		menuAddButton.setMargin(new Insets(0, 0, 0, 0));
+		menuSearchButton = new JButton("조회");
+		menuSearchButton.setMargin(new Insets(0, 0, 0, 0));
+		JLabel name_label = new JLabel("메뉴명");
+		
+		
+		menuAddButton.addActionListener(this);
+		menuSearchButton.addActionListener(this);
+		
+		name_label.setBounds(10,10,80,30);
+		name_field.setBounds(10,40,150,30);
+        menuAddButton.setBounds(180,40,85,30);
+        menuSearchButton.setBounds(270,40,65,30);
+        scroll.setBounds(10,80,330,240);
+
+        panel.add(name_label);
+		panel.add(name_field);
+		panel.add(menuAddButton);
+		panel.add(menuSearchButton);
+		panel.add(scroll);
+
+		return panel;
+	}
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource()== customerAddButton){
+			new AddCustomerPane();
+		}else if(e.getSource() == staffAddButton){
+			new AddStaffPane();
+		}else if(e.getSource() == menuAddButton){
+			new AddMenuPane();
+		}
+	}
+	public JTabbedPane createAndShowGUI() {
+		// Create and set up the window.
 
 		JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -60,183 +234,20 @@ public class TabbedPane extends JPanel implements ActionListener {
 
 		// The following line enables to use scrolling tabs.
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-	}
-
-	protected JComponent customerPane() {
-		JPanel panel = new JPanel();
-
-		panel.setFont(new Font("필기체", 1, 12));
-		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
-		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel);
-		title.setTitlePosition(TitledBorder.ABOVE_TOP);
-		panel.setBorder(title);
-		panel.setLayout(null);
-//		panel.setBounds(380,80,490,280);
 		
-		JTextArea resul_area = new JTextArea();
-		JTextField name_field = new JTextField();
-		JScrollPane scroll = new JScrollPane();
-		scroll.setViewportView(resul_area);
-		
-		customerAddButton = new JButton("가입");
-		customerSearchButton = new JButton("조회");
-		JLabel name_label = new JLabel("고객명");
-		
-		customerAddButton.addActionListener(this);
-		customerSearchButton.addActionListener(this);
-		
-		name_label.setBounds(10,10,80,30);
-		name_field.setBounds(10,40,80,30);
-        customerAddButton.setBounds(220,40,65,30);
-        customerSearchButton.setBounds(303,40,65,30);
-        scroll.setBounds(10,80,360,240);
-
-        panel.add(name_label);
-		panel.add(name_field);
-		panel.add(customerAddButton);
-		panel.add(customerSearchButton);
-		panel.add(scroll);
-
-		return panel;
-	}
-
-	protected JComponent salesPane() {
-		JPanel panel = new JPanel();
-
-		panel.setFont(new Font("필기체", 1, 12));
-		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
-		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel);
-		title.setTitlePosition(TitledBorder.ABOVE_TOP);
-		panel.setBorder(title);
-		panel.setLayout(null);
-//		panel.setBounds(380,80,490,280);
-		JComboBox<String> check_box = new JComboBox<String>();
-		check_box.addItem("2016-05-26");
-		
-		JTextArea resul_area = new JTextArea();
-		JScrollPane scroll = new JScrollPane();
-		scroll.setViewportView(resul_area);
-		
-		JLabel name_label = new JLabel("기간");
-		name_label.setBounds(10,40,80,30);
-		check_box.setBounds(60,40,110,30);
-        scroll.setBounds(10,80,360,240);
-
-        panel.add(name_label);
-		panel.add(check_box);
-		panel.add(scroll);
-
-		return panel;
-	}
-
-	protected JComponent staffPane() {
-		JPanel panel = new JPanel();
-
-		panel.setFont(new Font("필기체", 1, 12));
-		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
-		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel);
-		title.setTitlePosition(TitledBorder.ABOVE_TOP);
-		panel.setBorder(title);
-		panel.setLayout(null);
-//		panel.setBounds(380,80,490,280);
-		
-		JTextArea resul_area = new JTextArea();
-		JTextField name_field = new JTextField();
-		JScrollPane scroll = new JScrollPane();
-		scroll.setViewportView(resul_area);
-		
-		staffAddButton = new JButton("직원등록");
-		staffSearchButton = new JButton("조회");
-		
-		staffAddButton.addActionListener(this);
-		staffSearchButton.addActionListener(this);
-		
-		JLabel name_label = new JLabel("직원명");
-		name_label.setBounds(10,10,80,30);
-		name_field.setBounds(10,40,80,30);
-		staffAddButton.setBounds(200,40,85,30);
-		staffSearchButton.setBounds(303,40,65,30);
-        scroll.setBounds(10,80,360,240);
-
-        panel.add(name_label);
-		panel.add(name_field);
-		panel.add(staffAddButton);
-		panel.add(staffSearchButton);
-		panel.add(scroll);
-
-		return panel;
-	}
-
-	protected JComponent menuPane() {
-		JPanel panel = new JPanel();
-
-		panel.setFont(new Font("필기체", 1, 12));
-		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
-		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel);
-		title.setTitlePosition(TitledBorder.ABOVE_TOP);
-		panel.setBorder(title);
-		panel.setLayout(null);
-//		panel.setBounds(380,80,490,280);
-		
-		JTextArea resul_area = new JTextArea();
-		JTextField name_field = new JTextField();
-		JScrollPane scroll = new JScrollPane();
-		scroll.setViewportView(resul_area);
-		
-		menuAddButton = new JButton("메뉴등록");
-		menuSearchButton = new JButton("조회");
-		JLabel name_label = new JLabel("메뉴명");
-		
-		
-		menuAddButton.addActionListener(this);
-		menuSearchButton.addActionListener(this);
-		
-		name_label.setBounds(10,10,80,30);
-		name_field.setBounds(10,40,170,30);
-        menuAddButton.setBounds(200,40,85,30);
-        menuSearchButton.setBounds(303,40,65,30);
-        scroll.setBounds(10,80,360,240);
-
-        panel.add(name_label);
-		panel.add(name_field);
-		panel.add(menuAddButton);
-		panel.add(menuSearchButton);
-		panel.add(scroll);
-
-		return panel;
-	}
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource()== customerAddButton){
-			new AddCustomerPane();
-		}else if(e.getSource() == staffAddButton){
-			new AddStaffPane();
-		}else if(e.getSource() == menuAddButton){
-			new AddMenuPane();
-		}
-	}
-	private static void createAndShowGUI() {
-		// Create and set up the window.
-		JFrame frame = new JFrame("TabbedPane");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		// Add content to the window.
-		frame.add(new TabbedPane(), BorderLayout.CENTER);
-
-		// Display the window.
-		frame.pack();
-		frame.setSize(400, 400);
-		frame.setVisible(true);
+		return tabbedPane;
 	}
 
 	public static void main(String[] args) {
 		// Schedule a job for the event dispatch thread:
 		// creating and showing this application's GUI.
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				// Turn off metal's use of bold fonts
-				UIManager.put("swing.boldMetal", Boolean.FALSE);
-				createAndShowGUI();
-			}
-		});
+//		SwingUtilities.invokeLater(new Runnable() {
+//			public void run() {
+//				// Turn off metal's use of bold fonts
+//				UIManager.put("swing.boldMetal", Boolean.FALSE);
+////				createAndShowGUI();
+//			}
+//		});
+		new TabbedPane();
 	}
 }

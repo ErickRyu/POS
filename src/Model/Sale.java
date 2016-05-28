@@ -25,30 +25,30 @@ public class Sale {
 		if(mDaySalesMap.get(date) == null) return -1;
 		return mDaySalesMap.get(date);
 	}
-	public void addSales(Map<String, Integer> orderMap, int totalSales){
-		Date date = new Date();
-		String today = dateFormat.format(date);
-		// Update cumulative sales
-		mCumulativeSales += totalSales;
-		
-		// Update sales per day
-		if(mDaySalesMap.get(today) != null){
-			totalSales += mDaySalesMap.get(today);
-		}
-		mDaySalesMap.put(today, totalSales);
-		
-		// Update sale volume per menu
-		for(Entry<String, Integer>orderEntry : orderMap.entrySet()){
-			String menuName = orderEntry.getKey();
-			int salesVolume = orderEntry.getValue();
-			
-			if(mSalesVolumePerMenuMap.get(menuName) != null){
-				salesVolume += mSalesVolumePerMenuMap.get(menuName);
-			}
-			mSalesVolumePerMenuMap.put(menuName, salesVolume);
-		}
-		
-	}
+//	public void addSales(Map<String, Integer> orderMap, int totalSales){
+//		Date date = new Date();
+//		String today = dateFormat.format(date);
+//		// Update cumulative sales
+//		mCumulativeSales += totalSales;
+//		
+//		// Update sales per day
+//		if(mDaySalesMap.get(today) != null){
+//			totalSales += mDaySalesMap.get(today);
+//		}
+//		mDaySalesMap.put(today, totalSales);
+//		
+//		// Update sale volume per menu
+//		for(Entry<String, Integer>orderEntry : orderMap.entrySet()){
+//			String menuName = orderEntry.getKey();
+//			int salesVolume = orderEntry.getValue();
+//			
+//			if(mSalesVolumePerMenuMap.get(menuName) != null){
+//				salesVolume += mSalesVolumePerMenuMap.get(menuName);
+//			}
+//			mSalesVolumePerMenuMap.put(menuName, salesVolume);
+//		}
+//		
+//	}
 	public ArrayList<String> getMostSalesMenu(){
 		int max = 0;
 		ArrayList<String> mostSalesMenuList = new ArrayList<>();

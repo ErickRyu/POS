@@ -67,7 +67,7 @@ public class SaleControl {
 	
 	public int order(Scanner sc){
 		int res = -1;
-		if(mPos.isLogin() == -1){
+		if(isLogin() == -1){
 			return res;
 		}
 		
@@ -141,7 +141,7 @@ public class SaleControl {
 		int res = -1;
 
 		
-		if(mPos.isLogin() == -1){
+		if(isLogin() == -1){
 			return res;
 		}
 		
@@ -281,4 +281,16 @@ public class SaleControl {
 			System.out.format("%10s%10d\n", menuName, totalMenuPrice);
 		}
 	}
+	
+	public int isLogin(){
+		int res = -1;
+		if(mPos.mLoginStaffName == null){
+			mPos.mCurrentErrorMessage = "Please login first";
+			return res;
+		}
+		res = 1;
+		return res;
+		
+	}
 }
+

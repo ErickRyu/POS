@@ -4,6 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import UI.TabbedPane;
 
@@ -31,8 +39,7 @@ public class CustomerControl {
 			String sqlStr = "select * from customer where name = '" + searchName + "'";
 			PreparedStatement stmt = db.prepareStatement(sqlStr);
 			ResultSet rs = stmt.executeQuery();
-			
-			
+
 			rs.next();
 			mName = rs.getString("name");
 			mId = rs.getString("id");
@@ -40,7 +47,7 @@ public class CustomerControl {
 			mPhone = rs.getString("phone");
 			mGrade = rs.getString("grade");
 			mTotalPurchase = rs.getString("total_purchase");
-			
+
 			rs.close();
 			stmt.close();
 			res = 1;
@@ -53,17 +60,18 @@ public class CustomerControl {
 	public void searchAndShowCustomer(String searchName) {
 		if (searchCustomer(searchName) == 1) {
 			String result = "";
-			result +=  "°í    °´     ¸í : " + mName + "\n";
-			result +=  "°í    °´    I D : "+ mId + "\n";
-			result +=  "»ý             ÀÏ : "+ mBirth + "\n";
-			result +=  "Àü  È­ ¹ø  È£ : "+ mPhone + "\n";
-			result +=  "°í  °´ µî  ±Þ : "+ mGrade + "\n";
-			result +=  "ÃÑ ±¸¸Å±Ý¾× : "+ mTotalPurchase + "\n";
+			result += "°í    °´     ¸í : " + mName + "\n";
+			result += "°í    °´    I D : " + mId + "\n";
+			result += "»ý             ÀÏ : " + mBirth + "\n";
+			result += "Àü  È­ ¹ø  È£ : " + mPhone + "\n";
+			result += "°í  °´ µî  ±Þ : " + mGrade + "\n";
+			result += "ÃÑ ±¸¸Å±Ý¾× : " + mTotalPurchase + "\n";
 			TabbedPane.setCustomerResultArea(result);
 		} else {
 			TabbedPane.setCustomerResultArea(mCurrentErrorMessage);
 		}
 	}
+
 	public String getCustomerName(String customerName) {
 		try {
 			if (customerName.equals("")) {
@@ -86,6 +94,7 @@ public class CustomerControl {
 		}
 		return customerName;
 	}
+
 	public int addCustomer(String name, String birth, String phone) {
 		int res = -1;
 		if (searchCustomer(name) == 1) {
@@ -114,11 +123,11 @@ public class CustomerControl {
 			String sqlStr = "select threshold from grade where grade_name = '" + grade + "'";
 			PreparedStatement stmt = db.prepareStatement(sqlStr);
 			ResultSet rs = stmt.executeQuery();
-			
+
 			rs.next();
 			int totalPurchase = rs.getInt("threshold");
 			rs.close();
-			
+
 			sqlStr = "insert into customer values(" + (getNextCustomerId()) + ", '" + name + "', '" + birth + "', '"
 					+ phone + "', '" + grade + "', " + totalPurchase + ")";
 			stmt = db.prepareStatement(sqlStr);
@@ -130,5 +139,73 @@ public class CustomerControl {
 		}
 		return res;
 	}
-	public int getNextCustomerId(){return mCustomerId++;}
+
+	public int updateCustomerGrade(String customerName) {
+		int res = -1;
+		try {
+			String sqlStr = "select total_purchase from customer where name='" + customerName + "'";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			rs.next();
+			int totalPurchase = rs.getInt("total_purchase");
+			upgrade(customerName, totalPurchase);
+			res = 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	public int upgrade(String customerName, int totalPurchase) {
+		int res = -1;
+		try {
+			String sqlStr = "select * from grade";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			/* */
+			Map<String, Integer> gradeMap = new HashMap<>();
+			while (rs.next()) {
+				String gradeName = rs.getString("grade_name");
+				int threshold = rs.getInt("threshold");
+				gradeMap.put(gradeName, threshold);
+			}
+			gradeMap = MapUtil.sortByValue(gradeMap);
+			for (Entry<String, Integer> entry : gradeMap.entrySet()) {
+				String checkGrade = entry.getKey();
+				int checkThreshold = entry.getValue();
+				if (checkThreshold < totalPurchase) {
+					// update and return;
+					sqlStr = "update customer set grade='" + checkGrade + "' where name='" + customerName + "'";
+					stmt = db.prepareStatement(sqlStr);
+					stmt.executeQuery();
+					return 1;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return res;
+	}
+
+	public static class MapUtil {
+		public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
+			List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(map.entrySet());
+			Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
+				public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+					return (o2.getValue()).compareTo(o1.getValue());
+				}
+			});
+
+			Map<K, V> result = new LinkedHashMap<K, V>();
+			for (Map.Entry<K, V> entry : list) {
+				result.put(entry.getKey(), entry.getValue());
+			}
+			return result;
+		}
+	}
+
+	public int getNextCustomerId() {
+		return mCustomerId++;
+	}
 }

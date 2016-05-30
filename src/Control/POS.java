@@ -4,7 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import Control.CustomerControl.MapUtil;
 import DB.JDBC;
 import UI.POSFrame;
 
@@ -35,13 +44,13 @@ public class POS {
 
 		db = jdbc.db;
 		new POSFrame(this);
+		
 	}
 
 	public int login(String name, int id) {
 		int res = -1;
 		String sqlStr = "select name, id, position from staff where name = '" + name + "' and id='" + id + "'";
 		try {
-
 			PreparedStatement stmt = db.prepareStatement(sqlStr);
 			ResultSet rs = stmt.executeQuery();
 			rs.next();

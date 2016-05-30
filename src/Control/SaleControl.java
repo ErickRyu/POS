@@ -1,6 +1,5 @@
 package Control;
 
-import java.awt.Color;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,7 +39,6 @@ public class SaleControl {
 			ResultSet rs = stmt.executeQuery();
 
 			rs.next();
-			// Date day = rs.getDate("day");
 			String sales = rs.getString("sales");
 
 			result += "일 매출 : " + sales + "\n";
@@ -165,18 +163,9 @@ public class SaleControl {
 			e.printStackTrace();
 		}
 		
-		/*TODO
-		 * Update customer grade
-		 * 
-		 *
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 */
+		/* Update customer grade */
+		if(!customerName.equals("비회원"))
+			mPos.customerControl.updateCustomerGrade(customerName);
 
 		/* Update Sales of login staff */
 		sqlStr = "update staff " + "set sales = sales + " + totalSale + "where name = '" + mPos.mLoginStaffName + "'";

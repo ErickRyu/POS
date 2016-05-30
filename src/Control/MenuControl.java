@@ -72,7 +72,7 @@ public class MenuControl {
 		}
 
 		int strLength = POS.GetStringLength(name);
-		if (strLength > 20 || price > 9999999) {
+		if (strLength > 30 || price > 9999999) {
 			mCurrentErrorMessage = "글자 수 제한";
 			return res;
 		}
@@ -89,6 +89,7 @@ public class MenuControl {
 			MenuPanel.setButtonName(menuNum, name);
 			res = 1;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			mCurrentErrorMessage = "다시 입력하세요.";
 		}
 		return res;

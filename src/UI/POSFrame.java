@@ -4,8 +4,10 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -30,6 +32,8 @@ public class POSFrame implements ActionListener {
 	JMenuBar menuBar = new JMenuBar();
 	JMenu menu;
 	JMenuItem openItem;
+	
+	final JFileChooser fc = new JFileChooser();
 	public static JMenuItem loginItem;
 
 	public POSFrame(POS pos) {
@@ -123,7 +127,18 @@ public class POSFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if (e.getActionCommand().equals("Open")) {
-			mPos.jdbc.openData();
+			if (e.getSource() == openItem) {
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		        int returnVal = fc.showOpenDialog(this.posPanel);
+
+		        if (returnVal == JFileChooser.APPROVE_OPTION) {
+		            File file = fc.getSelectedFile();
+		            mPos.jdbc.openData(file);
+		        } else {
+		        }
+		   } 
+			
+			
 		} else if (e.getActionCommand().equals("Log in")) {
 			new LoginPanel(mPos);
 		} else if (e.getActionCommand().equals("Log out")) {

@@ -1,5 +1,6 @@
 package DB;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -86,11 +87,11 @@ public class JDBC {
 			System.out.println("Initiate grade " + e);
 		}
 	}
-
-	public void openData() {
+	
+	public void openData(File file) {
 		try {
 
-			Scanner sc = new Scanner(new FileReader("data.txt"));
+			Scanner sc = new Scanner(new FileReader(file));
 			int customerNum = sc.nextInt();
 			while (customerNum > 0) {
 				String name = sc.next();

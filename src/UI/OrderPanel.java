@@ -45,12 +45,14 @@ public class OrderPanel implements ActionListener {
 
 		nameLabel.setBounds(240, 30, 80, 20);
 		customerNameField.setBounds(240, 50, 80, 30);
-		tableNumLabel.setBounds(240, 90, 80, 20);
-		table_box.setBounds(270, 120, 50, 30);
-		orderButton.setBounds(260, 170, 60, 25);
-		cancelButton.setBounds(260, 200, 60, 25);
-		purchaseButton.setBounds(260, 230, 60, 25);
-		scroll.setBounds(10, 30, 200, 230);
+		
+		tableNumLabel.setBounds(240, 85, 80, 20);
+		table_box.setBounds(270, 110, 50, 25);
+		
+		orderButton.setBounds(260, 140, 60, 25);
+		cancelButton.setBounds(260, 170, 60, 25);
+		purchaseButton.setBounds(260, 200, 60, 25);
+		scroll.setBounds(10, 30, 200, 205);
 
 		table_box.addActionListener(this);
 		orderButton.addActionListener(this);

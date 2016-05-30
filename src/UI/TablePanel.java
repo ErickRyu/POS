@@ -12,7 +12,7 @@ import Control.POS;
 public class TablePanel implements ActionListener {
 	private static JButton[] tableButton;
 	private int width = 50;
-	private int height = 50;
+	private int height = 44;
 	private int border = 10;
 
 	POS mPos;

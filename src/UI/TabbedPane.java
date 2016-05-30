@@ -144,9 +144,10 @@ public class TabbedPane extends JPanel implements ActionListener {
 
 		name_label.setBounds(10, 10, 80, 30);
 		customerNameField.setBounds(10, 40, 80, 30);
-		customerAddButton.setBounds(180, 40, 65, 30);
-		customerSearchButton.setBounds(270, 40, 65, 30);
-		scroll.setBounds(10, 80, 330, 240);
+		
+		customerAddButton.setBounds(165, 40, 65, 30);
+		customerSearchButton.setBounds(258, 40, 65, 30);
+		scroll.setBounds(10, 80, 315, 240);
 
 		panel.add(name_label);
 		panel.add(customerNameField);
@@ -171,7 +172,7 @@ public class TabbedPane extends JPanel implements ActionListener {
 		name_label.setBounds(10, 40, 80, 30);
 		check_box.setBounds(60, 40, 110, 30);
 		check_box.addActionListener(this);
-		scroll.setBounds(10, 80, 330, 240);
+		scroll.setBounds(10, 80, 315, 240);
 
 		panel.add(name_label);
 		panel.add(check_box);
@@ -215,9 +216,9 @@ public class TabbedPane extends JPanel implements ActionListener {
 		JLabel name_label = new JLabel("Á÷¿ø¸í");
 		name_label.setBounds(10, 10, 80, 30);
 		mStaffNameField.setBounds(10, 40, 80, 30);
-		staffAddButton.setBounds(180, 40, 85, 30);
-		staffSearchButton.setBounds(270, 40, 65, 30);
-		scroll.setBounds(10, 80, 330, 240);
+		staffAddButton.setBounds(165, 40, 85, 30);
+		staffSearchButton.setBounds(258, 40, 65, 30);
+		scroll.setBounds(10, 80, 315, 240);
 
 		panel.add(name_label);
 		panel.add(mStaffNameField);
@@ -245,9 +246,10 @@ public class TabbedPane extends JPanel implements ActionListener {
 
 		name_label.setBounds(10, 10, 80, 30);
 		mMenuNameField.setBounds(10, 40, 150, 30);
-		menuAddButton.setBounds(180, 40, 85, 30);
-		menuSearchButton.setBounds(270, 40, 65, 30);
-		scroll.setBounds(10, 80, 330, 240);
+		
+		menuAddButton.setBounds(165, 40, 85, 30);
+		menuSearchButton.setBounds(258, 40, 65, 30);
+		scroll.setBounds(10, 80, 315, 240);
 
 		panel.add(name_label);
 		panel.add(mMenuNameField);

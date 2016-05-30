@@ -2,6 +2,7 @@ POS
 
 ToDo<br>
 1. Database schema 변경<br>
+2. 잘못된 파일을 읽었을 경우 에러 처리 (모든 메뉴 제거, 이전 상태로 dB복귀)
 
 
 <b>중간 회고</b>

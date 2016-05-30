@@ -55,6 +55,7 @@ public class POSFrame implements ActionListener{
 		JTabbedPane tabbedPane = tabbed.createAndShowGUI();
 		tabbedPane.setBounds(330, 300, 350, 390);
 
+		
 		posPanel.add(tablePane);
 		posPanel.add(orderPane);
 		posPanel.add(menuPane);
@@ -62,20 +63,25 @@ public class POSFrame implements ActionListener{
 		
 		setMenuBar();
 		
+		
+		JPanel tmpPanel = new JPanel();
+		
+		
 		frame.setJMenuBar(menuBar);
 		frame.add(posPanel);
 		frame.setTitle("POS");
 		frame.setSize(710, 750);
+		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
 	
-	public static JPanel getDefaultPanel() {
+	public static JPanel getDefaultPanel(String titleStr) {
 		JPanel panel = new JPanel();
 
 		panel.setFont(new Font("« ±‚√º", 1, 12));
 		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
-		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel);
+		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel, titleStr);
 		title.setTitlePosition(TitledBorder.ABOVE_TOP);
 
 		panel.setBorder(title);

@@ -11,10 +11,10 @@ import Control.POS;
 
 public class MenuPanel implements ActionListener {
 
-	public static JButton[] menuButton;
-	private int width = 130;
-	private int height = 25;
-	private int border = 10;
+	public static JButton[] mMenuButton;
+	private int mWidth = 130;
+	private int mHeight = 25;
+	private int mBorder = 10;
 
 	POS mPos;
 
@@ -23,19 +23,19 @@ public class MenuPanel implements ActionListener {
 	}
 
 	public JPanel menuPane() {
-		JPanel panel = POSFrame.getDefaultPanel();
+		JPanel panel = POSFrame.getDefaultPanel("¸Þ´º");
 
-		menuButton = new JButton[20];
+		mMenuButton = new JButton[20];
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 10; j++) {
 
-				menuButton[(i * 10) + j] = new JButton();
-				menuButton[(i * 10) + j].setMargin(new Insets(0, 0, 0, 0));
-				menuButton[(i * 10) + j].setActionCommand(Integer.toString((i * 10) + j));
-				menuButton[(i * 10) + j].setBounds(i * width + i * border + 20, j * height + j * border + 30, width,
-						height);
-				panel.add(menuButton[(i * 10) + j]);
-				menuButton[((i * 10) + j)].addActionListener(this);
+				mMenuButton[(i * 10) + j] = new JButton();
+				mMenuButton[(i * 10) + j].setMargin(new Insets(0, 0, 0, 0));
+				mMenuButton[(i * 10) + j].setActionCommand(Integer.toString((i * 10) + j));
+				mMenuButton[(i * 10) + j].setBounds(i * mWidth + i * mBorder + 20, j * mHeight + j * mBorder + 30, mWidth,
+						mHeight);
+				panel.add(mMenuButton[(i * 10) + j]);
+				mMenuButton[((i * 10) + j)].addActionListener(this);
 			}
 		}
 		return panel;
@@ -43,15 +43,15 @@ public class MenuPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		int myButtonNum = Integer.parseInt(e.getActionCommand());
-		String menuName = menuButton[myButtonNum].getText();
+		String menuName = mMenuButton[myButtonNum].getText();
 		if (menuName.equals(""))
 			return;
 		int tableNum = OrderPanel.getSelectedTableBoxItem();
 		String customerName = OrderPanel.getCustomerName();
-		mPos.saleControl.addMenu(tableNum, menuName, customerName);
+		mPos.saleControl.addTempOrder(tableNum, menuName, customerName);
 	}
 
 	public static void setButtonName(int menuNum, String menuName) {
-		menuButton[menuNum].setText(menuName);
+		mMenuButton[menuNum].setText(menuName);
 	}
 }

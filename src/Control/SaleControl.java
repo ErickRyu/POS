@@ -88,23 +88,7 @@ public class SaleControl {
 		return res;
 	}
 
-	public int getPrice(String menuName) {
-		int res = 0;
-		try {
-			String sqlStr = "select price from menu where name='" + menuName + "'";
-			PreparedStatement stmt = db.prepareStatement(sqlStr);
-			ResultSet rs = stmt.executeQuery();
-
-			rs.next();
-			res = rs.getInt("price");
-
-			rs.close();
-			stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return res;
-	}
+	
 
 	public int getTotalPrice(int tableNum) {
 		int res = 0;
@@ -124,7 +108,7 @@ public class SaleControl {
 		return res;
 	}
 
-	public void updateSaleTable(int totalSale) {
+	public void updateSales(int totalSale) {
 		try {
 			Date date = new Date();
 			String today = dateFormat.format(date);
@@ -140,29 +124,8 @@ public class SaleControl {
 			}
 			stmt = db.prepareStatement(sqlStr);
 			rs = stmt.executeQuery();
-			commit();
+			db.commit();
 
-			rs.close();
-			stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void updateMenuSales(int tableNum) {
-		try {
-			String sqlStr = "select * from orderstatus where table_num = " + tableNum;
-			PreparedStatement stmt = db.prepareStatement(sqlStr);
-			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
-				String menuName = rs.getString("menu_name");
-				int sales = rs.getInt("sales");
-				sqlStr = "update menu set cumulitive= cumulitive + " + sales + " where name='" + menuName + "'";
-				PreparedStatement stmt2 = db.prepareStatement(sqlStr);
-				ResultSet rs2 = stmt2.executeQuery();
-				rs2.close();
-				stmt2.close();
-			}
 			rs.close();
 			stmt.close();
 		} catch (SQLException e) {
@@ -172,7 +135,7 @@ public class SaleControl {
 
 	public int purchase(int tableNum, String customerName) {
 		/* Check is valid customer name and unless change name to 비회원 */
-		customerName = getCustomerName(customerName);
+		customerName = mPos.customerControl.getCustomerName(customerName);
 
 		/* Get original totalSale */
 		int totalSale = getTotalPrice(tableNum);
@@ -182,10 +145,10 @@ public class SaleControl {
 		totalSale *= discount;
 
 		/* Save today's total sales */
-		updateSaleTable(totalSale);
+		updateSales(totalSale);
 
 		/* update menu cumulitive */
-		updateMenuSales(tableNum);
+		mPos.menuControl.updateMenuSales(tableNum);
 
 		/* Remove order information */
 		deleteOrder(tableNum);
@@ -197,7 +160,7 @@ public class SaleControl {
 			PreparedStatement stmt = db.prepareStatement(sqlStr);
 			stmt.executeQuery();
 			stmt.close();
-			commit();
+			db.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -221,7 +184,7 @@ public class SaleControl {
 			PreparedStatement stmt = db.prepareStatement(sqlStr);
 			stmt.executeQuery();
 			stmt.close();
-			commit();
+			db.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -251,9 +214,9 @@ public class SaleControl {
 		return res;
 	}
 
-	public void addMenu(int tableNum, String menuName, String customerName) {
+	public void addTempOrder(int tableNum, String menuName, String customerName) {
 		try {
-			customerName = getCustomerName(customerName);
+			customerName = mPos.customerControl.getCustomerName(customerName);
 
 			String sqlStr = "select count(menu_name) from orderstatus where menu_name = '" + menuName
 					+ "' and table_num = " + tableNum;
@@ -265,15 +228,15 @@ public class SaleControl {
 			rs.close();
 			stmt.close();
 
-			updateCustomerName(tableNum, customerName);
+			updateOrderCustomerName(tableNum, customerName);
 			if (count == 0) {
 				sqlStr = "insert into orderstatus values(" + tableNum + ", '" + menuName + "', '" + customerName
-						+ "', 1, " + getPrice(menuName) + ")";
+						+ "', 1, " + mPos.menuControl.getPrice(menuName) + ")";
 				PreparedStatement stmt2 = db.prepareStatement(sqlStr);
 				stmt2.executeQuery();
 				stmt2.close();
 			} else {
-				sqlStr = "update orderstatus set sales = sales + 1, total_price = total_price + " + getPrice(menuName)
+				sqlStr = "update orderstatus set sales = sales + 1, total_price = total_price + " + mPos.menuControl.getPrice(menuName)
 						+ " where menu_name='" + menuName + "' and table_num = " + tableNum;
 				PreparedStatement stmt2 = db.prepareStatement(sqlStr);
 				stmt2.executeQuery();
@@ -287,7 +250,7 @@ public class SaleControl {
 		showOrder(tableNum);
 	}
 
-	public void updateCustomerName(int tableNum, String customerName) {
+	public void updateOrderCustomerName(int tableNum, String customerName) {
 		try {
 			String sqlStr = "select customer_name from orderstatus where table_num = " + tableNum;
 			PreparedStatement stmt = db.prepareStatement(sqlStr);
@@ -354,7 +317,7 @@ public class SaleControl {
 			ResultSet rs = stmt.executeQuery();
 			rs.close();
 			stmt.close();
-			commit();
+			db.commit();
 			showOrder(tableNum);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -363,39 +326,16 @@ public class SaleControl {
 
 	public void rollBack() {
 		try {
-			mPos.jdbc.rollback();
+			db.rollback();
 		} catch (SQLException e) {
 		}
 	}
 
 	public void commit() {
 		try {
-			mPos.jdbc.commit();
+			db.commit();
 		} catch (SQLException e) {
 		}
 	}
 
-	public String getCustomerName(String customerName) {
-		try {
-			if (customerName.equals("")) {
-				return "비회원";
-			}
-			String sqlStr = "select name from customer where name = '" + customerName + "'";
-			PreparedStatement stmt = db.prepareStatement(sqlStr);
-			ResultSet rs = stmt.executeQuery();
-
-			rs.next();
-			String eq = rs.getString("name");
-
-			if (!eq.equals(customerName)) {
-				customerName = "비회원";
-			}
-
-			rs.close();
-			stmt.close();
-		} catch (SQLException e) {
-			customerName = "비회원";
-		}
-		return customerName;
-	}
 }

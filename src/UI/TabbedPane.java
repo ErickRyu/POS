@@ -1,5 +1,6 @@
 package UI;
 
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -20,6 +22,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -71,7 +75,9 @@ public class TabbedPane extends JPanel implements ActionListener {
 
 	public JTabbedPane createAndShowGUI() {
 		// Create and set up the window.
-
+		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel, "등록/조회");
+		title.setTitlePosition(TitledBorder.ABOVE_TOP);
 		JTabbedPane tabbedPane = new JTabbedPane();
 
 		JComponent panel1 = customerPane();
@@ -86,6 +92,7 @@ public class TabbedPane extends JPanel implements ActionListener {
 		JComponent panel4 = menuPane();
 		tabbedPane.addTab("메뉴", panel4);
 
+		tabbedPane.setBorder(title);
 		add(tabbedPane);
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		ChangeListener changeListener = new ChangeListener() {
@@ -121,7 +128,7 @@ public class TabbedPane extends JPanel implements ActionListener {
 	}
 
 	protected JComponent customerPane() {
-		JPanel panel = POSFrame.getDefaultPanel();
+		JPanel panel = POSFrame.getDefaultPanel(null);
 
 		/* Have to refactoring this area */
 
@@ -154,7 +161,7 @@ public class TabbedPane extends JPanel implements ActionListener {
 	}
 
 	protected JComponent salesPane() {
-		JPanel panel = POSFrame.getDefaultPanel();
+		JPanel panel = POSFrame.getDefaultPanel(null);
 
 		panel.setBounds(380, 80, 490, 280);
 		check_box = new JComboBox<String>();
@@ -195,7 +202,7 @@ public class TabbedPane extends JPanel implements ActionListener {
 	}
 
 	protected JComponent staffPane() {
-		JPanel panel = POSFrame.getDefaultPanel();
+		JPanel panel = POSFrame.getDefaultPanel(null);
 
 		JScrollPane scroll = new JScrollPane();
 		scroll.setViewportView(mStaffResultArea);
@@ -225,7 +232,7 @@ public class TabbedPane extends JPanel implements ActionListener {
 	}
 
 	protected JComponent menuPane() {
-		JPanel panel = POSFrame.getDefaultPanel();
+		JPanel panel = POSFrame.getDefaultPanel(null);
 
 		JScrollPane scroll = new JScrollPane();
 		scroll.setViewportView(mMenuResultArea);

@@ -64,8 +64,29 @@ public class CustomerControl {
 			TabbedPane.setCustomerResultArea(mCurrentErrorMessage);
 		}
 	}
+	public String getCustomerName(String customerName) {
+		try {
+			if (customerName.equals("")) {
+				return "비회원";
+			}
+			String sqlStr = "select name from customer where name = '" + customerName + "'";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
 
-	public int addCustomerDB(String name, String birth, String phone) {
+			rs.next();
+			String eq = rs.getString("name");
+
+			if (!eq.equals(customerName)) {
+				customerName = "비회원";
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			customerName = "비회원";
+		}
+		return customerName;
+	}
+	public int addCustomer(String name, String birth, String phone) {
 		int res = -1;
 		if (searchCustomer(name) == 1) {
 			mCurrentErrorMessage = "이미 존재하는 고객입니다.";

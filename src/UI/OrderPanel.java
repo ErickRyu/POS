@@ -31,7 +31,7 @@ public class OrderPanel implements ActionListener {
 	}
 
 	public JPanel orderPane() {
-		JPanel panel = POSFrame.getDefaultPanel();
+		JPanel panel = POSFrame.getDefaultPanel("주문내역");
 
 		for (int i = 1; i <= 20; i++)
 			table_box.addItem(i);

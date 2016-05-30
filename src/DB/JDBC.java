@@ -118,7 +118,7 @@ public class JDBC {
 				mPos.menuControl.addMenuDB(name, price);
 				MenuPanel.setButtonName(i, name);
 			}
-			commit();
+			db.commit();
 
 			sc.close();
 		} catch (SQLException e) {
@@ -129,28 +129,10 @@ public class JDBC {
 		}
 	}
 
-	// public ResultSet executeQueryAndGetResultSet(String sqlStr) throws
-	// SQLException {
-	// PreparedStatement stmt;
-	// stmt = db.prepareStatement(sqlStr);
-	// ResultSet rs = stmt.executeQuery();
-	// return rs;
-	// }
 	public void executeQuery(String sqlStr) throws SQLException {
 		PreparedStatement stmt = db.prepareStatement(sqlStr);
 		stmt.executeQuery();
 		stmt.close();
 	}
 
-	// public void closePreparedStatement()throws SQLException{
-	// if(stmt != null)
-	// stmt.close();
-	// }
-	public void commit() throws SQLException {
-		db.commit();
-	}
-
-	public void rollback() throws SQLException {
-		db.rollback();
-	}
 }

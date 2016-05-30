@@ -82,7 +82,7 @@ public class AddCustomerPane implements ActionListener {
 				JOptionPane.showMessageDialog(null, (String) errorMessage, "메시지", 2);
 				return;
 			}
-			int res = mCustomerControl.addCustomerDB(name, birth, phone);
+			int res = mCustomerControl.addCustomer(name, birth, phone);
 
 			if (res == 1) {
 				JOptionPane.showMessageDialog(null, "등록 완료", "메시지", 2);

@@ -87,7 +87,45 @@ public class MenuControl {
 		}
 		return res;
 	}
+	public void updateMenuSales(int tableNum) {
+		try {
+			String sqlStr = "select * from orderstatus where table_num = " + tableNum;
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String menuName = rs.getString("menu_name");
+				int sales = rs.getInt("sales");
+				sqlStr = "update menu set cumulitive= cumulitive + " + sales + " where name='" + menuName + "'";
+				PreparedStatement stmt2 = db.prepareStatement(sqlStr);
+				ResultSet rs2 = stmt2.executeQuery();
+				rs2.close();
+				stmt2.close();
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public int getPrice(String menuName) {
+		int res = 0;
+		try {
+			String sqlStr = "select price from menu where name='" + menuName + "'";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
 
+			rs.next();
+			res = rs.getInt("price");
+
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
 	public int countMenuNum() {
 		int res = 0;
 		try {

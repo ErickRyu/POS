@@ -13,8 +13,6 @@ import javax.swing.border.TitledBorder;
 import Control.POS;
 
 public class TablePanel implements ActionListener {
-	private JPanel panel = new JPanel();
-
 	private static JButton[] tableButton;
 	private int width = 50;
 	private int height = 50;
@@ -27,14 +25,8 @@ public class TablePanel implements ActionListener {
 	}
 
 	public JPanel tablePane() {
-		panel.setLayout(null);
 		tableButton = new JButton[20];
-
-		
-		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
-		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel, "테이블 현황");
-		title.setTitlePosition(TitledBorder.ABOVE_TOP);
-		panel.setBorder(title);
+		JPanel panel= POSFrame.getDefaultPanel("테이블 현황");
 
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 5; j++) {

@@ -1,9 +1,9 @@
-.POS
+POS
 
-ToDo
-1. file open 변경
-2. Database schema 변경
-3. 그래픽 요구사항과 맞게 변경
+ToDo<br>
+1. file open 변경<br>
+2. Database schema 변경<br>
+3. 그래픽 요구사항과 맞게 변경<br>
 
 
 <b>중간 회고</b>

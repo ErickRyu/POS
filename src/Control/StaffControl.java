@@ -1,58 +1,86 @@
 package Control;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
 
-import Model.Staff;
+import UI.TabbedPane;
 
 public class StaffControl {
 	POS mPos;
-	public StaffControl(POS pos){
+	String mName;
+	String mPosition;
+	String mSales;
+	Connection db;
+	public static String mCurrentErrorMessage = "";
+	static int mStaffId = 1000;
+
+	public StaffControl(POS pos) {
 		mPos = pos;
+		db = mPos.jdbc.db;
 	}
-	
-	/* Search from JDBC */
-	public int searchStaffDB(String searchName) {
+
+	public int searchStaff(String searchName) {
 
 		int res = -1;
 		try {
 			String sqlStr = "select * from staff where name = '" + searchName + "'";
-			ResultSet rs = mPos.jdbc.executeQueryAndGetResultSet(sqlStr);
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+
 			rs.next();
-			String name = rs.getString("name");
-			String birth = rs.getString("position");
-			String sales = rs.getString("sales");
-			
-			System.out.println("Staff Info");
-			System.out.println(name);
-			System.out.println(birth);
-			System.out.println(sales);
+			mName = rs.getString("name");
+			mPosition = rs.getString("position");
+			mSales = rs.getString("sales");
 			res = 1;
 
+			rs.close();
+			stmt.close();
 		} catch (SQLException e) {
-			mPos.mCurrentErrorMessage = "Not exist";
+			mCurrentErrorMessage = "검색 결과 없음.";
 		}
 		return res;
 	}
 
-	public int addStaffDB(String addName, Scanner sc) {
-		int res = -1;
-		if (searchStaffDB(addName) == 1) {
-			mPos.mCurrentErrorMessage = "Same staff name is already exist";
+	public void searchAndShowStaff(String searchName) {
+		int res = searchStaff(searchName);
+		if (res == 1) {
+			String result = "";
+			result += "직원명 : " + mName + "\n";
+			result += "직    급 : " + mPosition + "\n";
+			result += "총실적 : " + mSales + "\n";
+			TabbedPane.setStaffResultArea(result);
+		} else {
+			TabbedPane.setStaffResultArea(mCurrentErrorMessage);
+		}
+	}
+
+	public int addStaffDB(String name, String position) {
+		int res = searchStaff(name);
+		if (searchStaff(name) == 1) {
+			res = -1;
+			mCurrentErrorMessage = "이미 존재하는 이름입니다.";
 			return res;
 		}
 		try {
-			System.out.println("Input position");
-			String position = sc.next();
-
-			String sqlStr = "insert into staff (id, name, position) values("+ (mPos.jdbc.staffId++) +", '" + addName + "','" + position + "')";
-			mPos.jdbc.executeQuery(sqlStr);
-			
+			res = -1;
+			String sqlStr = "insert into staff (id, name, position) values(" + (getNextCustomerId()) + ", '" + name
+					+ "','" + position + "')";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			rs.close();
+			stmt.close();
+			db.commit();
 			res = 1;
+
 		} catch (SQLException e) {
-			e.printStackTrace();
+			mCurrentErrorMessage = "다시 입력하세요.";
 		}
 		return res;
+	}
+
+	public int getNextCustomerId() {
+		return mStaffId++;
 	}
 }

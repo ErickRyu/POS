@@ -1,90 +1,80 @@
 package Control;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import DB.JDBC;
-import Model.Customer;
-import Model.Menu;
-import Model.Sale;
-import Model.Staff;
-import Model.Table;
+import UI.POSFrame;
 
 public class POS {
 	// member 변수 앞에는 m을 붙이는 것.
 
 	/* Save name who login */
 	public String mLoginStaffName;
+	public String mLoginStaffPosition;
+	public static String mCurrentErrorMessage = "";
 
-	/* Save Database information */
-	public Map<String, Staff> mStaffMap;
-	public Map<String, Menu> mMenuMap;
-	public Map<String, Customer> mCustomerMap;
+	public CustomerControl customerControl;
+	public MenuControl menuControl;
+	public SaleControl saleControl;
+	public StaffControl staffControl;
 
-	
-	public Map<Integer, Table> mTableMap;		/* Save order information per table */
-	
-	public Sale mSale;
-	public String mCurrentErrorMessage = "";
-	
-	
-	JDBC jdbc;
+	public JDBC jdbc;
+
+	Connection db;
+
+	/*
+	 * TODO 고객 등록시 번호 입력에 대한 조건 주기 번호 4자리가 아닐 경우에러 발생 <- 패널에서 처리하기
+	 * 
+	 * 주문한 테이블만 결제가 가능하도록 변경할것
+	 * 
+	 * 슈퍼바이저에게만 매출이 보이도록
+	 */
 	public POS() {
-		mStaffMap = new HashMap<String, Staff>();
-		mMenuMap = new HashMap<String, Menu>();
-		mCustomerMap = new HashMap<String, Customer>();
-		mSale = new Sale();
-		mTableMap = new HashMap<>();
-		
-		jdbc = new JDBC();
-		readData();
-		new Command(this);
+		jdbc = new JDBC(this);
+
+		customerControl = new CustomerControl(this);
+		menuControl = new MenuControl(this);
+		saleControl = new SaleControl(this);
+		staffControl = new StaffControl(this);
+
+		db = jdbc.db;
+		new POSFrame(this);
 	}
 
-	public void readData() {
+	public int login(String name, int id) {
+		int res = -1;
+		String sqlStr = "select name, id, position from staff where name = '" + name + "' and id='" + id + "'";
 		try {
-			Scanner sc = new Scanner(new FileReader("data.txt"));
-			int customerNum = sc.nextInt();
-			while (customerNum > 0) {
-				String name = sc.next();
-				String birth = sc.next();
-				String phone = sc.next();
-				String grade = sc.next();
 
-				Customer cutomer = new Customer(name, birth, phone, grade);
-				mCustomerMap.put(name, cutomer);
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			rs.next();
+			mLoginStaffName = name;
+			mLoginStaffPosition = rs.getString("position");
+			POSFrame.changeLoginButton();
+			rs.close();
+			stmt.close();
 
-				customerNum--;
-			}
-			int staffNum = sc.nextInt();
-			while (staffNum > 0) {
-				String name = sc.next();
-				String position = sc.next();
-
-				Staff staff = new Staff(name, position);
-
-				mStaffMap.put(name, staff);
-
-				staffNum--;
-			}
-
-			int menuNum = sc.nextInt();
-			while (menuNum > 0) {
-				String name = sc.next();
-				int price = sc.nextInt();
-
-				Menu menu = new Menu(name, price);
-
-				mMenuMap.put(name, menu);
-				menuNum--;
-			}
-			sc.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			res = 1;
+		} catch (SQLException e) {
+			mCurrentErrorMessage = "아이디/사원번호 를 확인하세요.";
 		}
+		return res;
+	}
+
+	public void logout() {
+		mLoginStaffName = null;
+		mLoginStaffPosition = null;
+	}
+
+	public boolean isLogin() {
+		return mLoginStaffName != null;
+	}
+
+	public boolean isSupervisor() {
+		return mLoginStaffPosition != null && mLoginStaffPosition.equals("Supervisor");
 	}
 }

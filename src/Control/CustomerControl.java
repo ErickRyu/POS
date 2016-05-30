@@ -1,65 +1,113 @@
 package Control;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
 
-import Model.Customer;
+import UI.TabbedPane;
 
 public class CustomerControl {
 	POS mPos;
+	String mName;
+	String mId;
+	String mBirth;
+	String mPhone;
+	String mGrade;
+	String mTotalPurchase;
+	Connection db;
+
+	private static int mCustomerId = 1000;
+	public static String mCurrentErrorMessage = "";
 
 	public CustomerControl(POS pos) {
 		mPos = pos;
+		db = mPos.jdbc.db;
 	}
 
-	/* Search from JDBC */
-	public int searchCustomerDB(String searchName) {
-
+	public int searchCustomer(String searchName) {
 		int res = -1;
 		try {
 			String sqlStr = "select * from customer where name = '" + searchName + "'";
-			ResultSet rs = mPos.jdbc.executeQueryAndGetResultSet(sqlStr);
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			
+			
 			rs.next();
-			String name = rs.getString("name");
-			String birth = rs.getString("birth");
-			String phone = rs.getString("phone");
-			String grade = rs.getString("grade");
-			String totalPurchase = rs.getString("total_purchase");
-
-			System.out.println("Customer Info");
-			System.out.println(name);
-			System.out.println(birth);
-			System.out.println(phone);
-			System.out.println(grade);
-			System.out.println(totalPurchase);
+			mName = rs.getString("name");
+			mId = rs.getString("id");
+			mBirth = rs.getString("birth");
+			mPhone = rs.getString("phone");
+			mGrade = rs.getString("grade");
+			mTotalPurchase = rs.getString("total_purchase");
+			
+			rs.close();
+			stmt.close();
 			res = 1;
-
 		} catch (SQLException e) {
-			mPos.mCurrentErrorMessage = "Not exist";
+			mCurrentErrorMessage = "검색 결과 없음.";
 		}
 		return res;
 	}
 
-	public int addCustomerDB(String addName, Scanner sc) {
+	public void searchAndShowCustomer(String searchName) {
+		if (searchCustomer(searchName) == 1) {
+			String result = "";
+			result +=  "고    객     명 : " + mName + "\n";
+			result +=  "고    객    I D : "+ mId + "\n";
+			result +=  "생             일 : "+ mBirth + "\n";
+			result +=  "전  화 번  호 : "+ mPhone + "\n";
+			result +=  "고  객 등  급 : "+ mGrade + "\n";
+			result +=  "총 구매금액 : "+ mTotalPurchase + "\n";
+			TabbedPane.setCustomerResultArea(result);
+		} else {
+			TabbedPane.setCustomerResultArea(mCurrentErrorMessage);
+		}
+	}
+
+	public int addCustomerDB(String name, String birth, String phone) {
 		int res = -1;
-		if (searchCustomerDB(addName) == 1) {
-			mPos.mCurrentErrorMessage = "DB : Same customer name is already exist";
+		if (searchCustomer(name) == 1) {
+			mCurrentErrorMessage = "이미 존재하는 고객입니다.";
 			return res;
 		}
 		try {
-			System.out.println("Input birthday");
-			String birth = sc.next();
-			System.out.println("Input phone number");
-			String phone = sc.next();
+			String sqlStr = "insert into customer (id, name, birth, phone) values(" + (getNextCustomerId()) + ", '"
+					+ name + "','" + birth + "', '" + phone + "')";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			rs.close();
+			stmt.close();
 
-			String sqlStr = "insert into customer (id, name, birth, phone) values("+ (mPos.jdbc.customerId++) +", '" + addName + "','" + birth + "', '" + phone + "')";
-			mPos.jdbc.executeQuery(sqlStr);
-			
+			db.commit();
 			res = 1;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			mCurrentErrorMessage = "다시 입력하세요.";
 		}
 		return res;
 	}
+
+	public int addCustomer(String name, String birth, String phone, String grade) throws SQLException {
+		int res = -1;
+		try {
+			String sqlStr = "select threshold from grade where grade_name = '" + grade + "'";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			
+			rs.next();
+			int totalPurchase = rs.getInt("threshold");
+			rs.close();
+			
+			sqlStr = "insert into customer values(" + (getNextCustomerId()) + ", '" + name + "', '" + birth + "', '"
+					+ phone + "', '" + grade + "', " + totalPurchase + ")";
+			stmt = db.prepareStatement(sqlStr);
+			stmt.executeQuery();
+			stmt.close();
+			db.commit();
+		} catch (SQLException e) {
+
+		}
+		return res;
+	}
+	public int getNextCustomerId(){return mCustomerId++;}
 }

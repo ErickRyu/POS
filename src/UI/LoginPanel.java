@@ -2,7 +2,6 @@ package UI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,7 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import Control.POS;
-import Model.Staff;
 
 public class LoginPanel implements ActionListener {
 
@@ -23,7 +21,7 @@ public class LoginPanel implements ActionListener {
 	private JTextField nameInput = new JTextField();
 	private JTextField idInput = new JTextField();
 	private JButton loginButton = new JButton("로그인");
-
+	public static String mCurrentErrorMessage = "";
 	public POS mPos;
 
 	public LoginPanel(POS pos) {
@@ -51,25 +49,18 @@ public class LoginPanel implements ActionListener {
 		frame.setVisible(true);
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		String name = nameInput.getText();
-		int id = Integer.parseInt(idInput.getText());
-		login(name, id);
-	}
-
-	public void login(String name, int id) {
-		Staff staff = mPos.mStaffMap.get(name);
-
-		if (staff != null) {
-			if (staff.getName().equals(name)) {
-				if (staff.getId() == id) {
-					mPos.mLoginStaffName = name;
-					frame.setVisible(false);
-					return;
-				}
+	public void actionPerformed(ActionEvent act) {
+		try {
+			String name = nameInput.getText();
+			int id = Integer.parseInt(idInput.getText());
+			int res = mPos.login(name, id);
+			if (res == 1) {
+				frame.dispose();
+			} else {
+				JOptionPane.showMessageDialog(null, (String) mPos.mCurrentErrorMessage, "메시지", 2);
 			}
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, (String) "사원번호를 확인하세요 ", "메시지", 2);
 		}
-		mPos.mCurrentErrorMessage = "Fail to login";
-		JOptionPane.showMessageDialog(null, (String) "아이디/사원번호 를 확인하세요.", "메시지", 2);
 	}
 }

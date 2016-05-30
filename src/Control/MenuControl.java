@@ -1,64 +1,111 @@
 package Control;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
 
-import Model.Menu;
+import UI.MenuPanel;
+import UI.TabbedPane;
 
 public class MenuControl {
 	POS mPos;
-	public MenuControl(POS pos){
+	Connection db;
+	String mName;
+	String mPrice;
+	String mCumulitive;
+	static int mMenuId = 1000;
+	public static String mCurrentErrorMessage = "";
+
+	public MenuControl(POS pos) {
 		mPos = pos;
+		db = mPos.jdbc.db;
 	}
-	/* Search from JDBC */
-	public int searchMenuDB(String searchName) {
+
+	public int searchMenu(String searchName) {
 
 		int res = -1;
 		try {
 			String sqlStr = "select * from menu where name = '" + searchName + "'";
-			ResultSet rs = mPos.jdbc.executeQueryAndGetResultSet(sqlStr);
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+
 			rs.next();
-			String name = rs.getString("name");
-			String price = rs.getString("price");
-			String cumulitive = rs.getString("cumulitive");
-			
-			System.out.println("Menu Info");
-			System.out.println(name);
-			System.out.println(price);
-			System.out.println(cumulitive);
+			mName = rs.getString("name");
+			mPrice = rs.getString("price");
+			mCumulitive = rs.getString("cumulitive");
 			res = 1;
 
+			rs.close();
+			stmt.close();
+
 		} catch (SQLException e) {
-			mPos.mCurrentErrorMessage = "Not exist";
+			mCurrentErrorMessage = "검색 결과 없음.";
 		}
 		return res;
 	}
-	
-	
-	public int addMenuDB(String addName, Scanner sc) {
+
+	public void searchAndShowMenu(String searchName) {
+		int res = searchMenu(searchName);
+		if (res == 1) {
+			String result = "";
+			result += "메뉴명 : " + mName + "\n";
+			result += "가   격 : " + mPrice + "\n";
+			TabbedPane.setMenuResultArea(result);
+		} else {
+			TabbedPane.setMenuResultArea(mCurrentErrorMessage);
+		}
+	}
+
+	public int addMenuDB(String name, int price) {
 		int res = -1;
-		if (searchMenuDB(addName) == 1) {
-			mPos.mCurrentErrorMessage = "Same menu name is already exist";
+
+		if (searchMenu(name) == 1) {
+			mCurrentErrorMessage = "존재하는 이름입니다.";
 			return res;
 		}
-		
-//		if (mPos.mMenuMap.size() >= 20) {
-//			mPos.mCurrentErrorMessage = "No more add menu. 20 is maximum menu";
-//			return res;
-//		}
-		
-		try {
-			System.out.println("Input price");
-			int price = sc.nextInt();
 
-			String sqlStr = "insert into menu (id, name, price) values("+ (mPos.jdbc.menuId++) +", '" + addName + "'," + price + ")";
-			mPos.jdbc.executeQuery(sqlStr);
+		int menuNum = countMenuNum();
+		if (menuNum >= 20) {
+			mCurrentErrorMessage = "20개 이상 등록할 수 없습니다.";
+			return res;
+		}
+
+		try {
+			String sqlStr = "insert into menu (id, name, price) values(" + getNextMenuId() + ", '" + name + "'," + price
+					+ ")";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
 			
+			rs.close();
+			stmt.close();
+			db.commit();
+			MenuPanel.setButtonName(menuNum, name);
 			res = 1;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			mCurrentErrorMessage = "다시 입력하세요.";
 		}
 		return res;
+	}
+
+	public int countMenuNum() {
+		int res = 0;
+		try {
+			String sqlStr = "select count(name) from menu";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+
+			rs.next();
+			res = rs.getInt("count(name)");
+			
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+		}
+		return res;
+	}
+
+	public int getNextMenuId() {
+		return mMenuId++;
 	}
 }

@@ -1,6 +1,5 @@
 package UI;
 
-import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +33,7 @@ import Control.SaleControl;
 import Control.StaffControl;
 
 public class TabbedPane extends JPanel implements ActionListener {
+	private static final long serialVersionUID = 1L;
 	JButton customerSearchButton;
 	JButton staffSearchButton;
 	JButton menuSearchButton;
@@ -104,7 +104,7 @@ public class TabbedPane extends JPanel implements ActionListener {
 				customerNameField.setText(null);
 				mMenuNameField.setText(null);
 				mStaffNameField.setText(null);
-				
+
 			}
 		};
 		tabbedPane.addChangeListener(changeListener);
@@ -130,10 +130,7 @@ public class TabbedPane extends JPanel implements ActionListener {
 	protected JComponent customerPane() {
 		JPanel panel = POSFrame.getDefaultPanel(null);
 
-		/* Have to refactoring this area */
-
 		customerNameField = new JTextField();
-		/* End of must refactoring area */
 
 		JScrollPane scroll = new JScrollPane();
 		scroll.setViewportView(customerResultArea);

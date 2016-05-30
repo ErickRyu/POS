@@ -15,7 +15,7 @@ public class MenuControl {
 	String mPrice;
 	String mCumulitive;
 	static int mMenuId = 1000;
-	public static String mCurrentErrorMessage = "";
+	public String mCurrentErrorMessage = "";
 
 	public MenuControl(POS pos) {
 		mPos = pos;
@@ -71,12 +71,18 @@ public class MenuControl {
 			return res;
 		}
 
+		int strLength = POS.GetStringLength(name);
+		if (strLength > 20 || price > 9999999) {
+			mCurrentErrorMessage = "글자 수 제한";
+			return res;
+		}
+
 		try {
 			String sqlStr = "insert into menu (id, name, price) values(" + getNextMenuId() + ", '" + name + "'," + price
 					+ ")";
 			PreparedStatement stmt = db.prepareStatement(sqlStr);
 			ResultSet rs = stmt.executeQuery();
-			
+
 			rs.close();
 			stmt.close();
 			db.commit();
@@ -87,6 +93,7 @@ public class MenuControl {
 		}
 		return res;
 	}
+
 	public void updateMenuSales(int tableNum) {
 		try {
 			String sqlStr = "select * from orderstatus where table_num = " + tableNum;
@@ -107,7 +114,7 @@ public class MenuControl {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public int getPrice(String menuName) {
 		int res = 0;
 		try {
@@ -125,7 +132,7 @@ public class MenuControl {
 		}
 		return res;
 	}
-	
+
 	public int countMenuNum() {
 		int res = 0;
 		try {
@@ -135,7 +142,7 @@ public class MenuControl {
 
 			rs.next();
 			res = rs.getInt("count(name)");
-			
+
 			rs.close();
 			stmt.close();
 		} catch (SQLException e) {

@@ -60,24 +60,34 @@ public class AddMenuPane implements ActionListener {
 		frame.setVisible(true);
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == addButton) {
+	public void actionPerformed(ActionEvent act) {
+		if (act.getSource() == addButton) {
+			String errorMessage = "";
 			try {
 				String name = nameInput.getText();
-				int price = Integer.parseInt(priceInput.getText());
-
+				int price = 0;
+				
+				try{
+					price = Integer.parseInt(priceInput.getText());
+				}catch(NumberFormatException nfe){
+					errorMessage = "숫자를 입력하세요.";
+					throw new Exception(errorMessage);
+				}
+				
+				
 				int res = mMenuControl.addMenuDB(name, price);
 				if (res == 1) {
-					JOptionPane.showMessageDialog(null, (String) "등록완료", "메시지", 2);
+					JOptionPane.showMessageDialog(null, "등록완료", "Info", 2);
 					frame.dispose();
 				} else {
-					JOptionPane.showMessageDialog(null, (String) mMenuControl.mCurrentErrorMessage, "메시지", 2);
+					throw new Exception(mMenuControl.mCurrentErrorMessage);
 				}
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(null, (String) "다시 입력하세요.", "메시지", 2);
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", 2);
 			}
-		} else if (e.getSource() == cancelButton) {
+		} else if (act.getSource() == cancelButton) {
 			frame.setVisible(false);
 		}
 	}
 }
+	

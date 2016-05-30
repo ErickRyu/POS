@@ -4,11 +4,8 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 
 import Control.POS;
 
@@ -26,7 +23,7 @@ public class TablePanel implements ActionListener {
 
 	public JPanel tablePane() {
 		tableButton = new JButton[20];
-		JPanel panel= POSFrame.getDefaultPanel("테이블 현황");
+		JPanel panel = POSFrame.getDefaultPanel("테이블 현황");
 
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 5; j++) {
@@ -57,7 +54,8 @@ public class TablePanel implements ActionListener {
 	public static void setTableColorYellow(int tableNum) {
 		tableButton[tableNum - 1].setBackground(Color.yellow);
 	}
-	public static Color getTableColor(int tableNum){
-		return tableButton[tableNum -1].getBackground();
+
+	public static Color getTableColor(int tableNum) {
+		return tableButton[tableNum - 1].getBackground();
 	}
 }

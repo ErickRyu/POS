@@ -66,13 +66,12 @@ public class AddStaffPane implements ActionListener {
 		if (e.getSource() == addButton) {
 			String name = nameInput.getText();
 			String position = positionInput.getSelectedItem().toString();
-			System.out.println("selected position name is : " + position);
 			int res = mStaffControl.addStaffDB(name, position);
 			if (res == 1) {
-				JOptionPane.showMessageDialog(null, (String) "등록완료", "메시지", 2);
+				JOptionPane.showMessageDialog(null, "등록완료", "Info", 2);
 				frame.dispose();
 			} else {
-				JOptionPane.showMessageDialog(null, (String) mStaffControl.mCurrentErrorMessage, "메시지", 2);
+				JOptionPane.showMessageDialog(null, mStaffControl.mCurrentErrorMessage, "Error", 2);
 			}
 		} else if (e.getSource() == cancelButton) {
 			frame.setVisible(false);

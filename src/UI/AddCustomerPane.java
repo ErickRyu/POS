@@ -70,25 +70,13 @@ public class AddCustomerPane implements ActionListener {
 			String name = nameInput.getText();
 			String birth = birthInput.getText();
 			String phone = phoneInput.getText();
-			String errorMessage = "숫자를 입력하세요.";
-			try{
-				Integer.parseInt(birth);
-				Integer.parseInt(phone);
-				if(birth.length() != 4){
-					errorMessage = "생일은 4자리를 입력하세요.\n ex)5월 7일  -> 0507";		
-					throw new Exception();
-				}
-			}catch(Exception e){
-				JOptionPane.showMessageDialog(null, (String) errorMessage, "메시지", 2);
-				return;
-			}
 			int res = mCustomerControl.addCustomer(name, birth, phone);
 
 			if (res == 1) {
-				JOptionPane.showMessageDialog(null, "등록 완료", "메시지", 2);
+				JOptionPane.showMessageDialog(null, "등록 완료", "Info", 2);
 				frame.dispose();
 			} else {
-				JOptionPane.showMessageDialog(null, mCustomerControl.mCurrentErrorMessage, "메시지", 2);
+				JOptionPane.showMessageDialog(null, mCustomerControl.mCurrentErrorMessage, "Error", 2);
 			}
 		} else if (act.getSource() == cancelButton) {
 			frame.dispose();

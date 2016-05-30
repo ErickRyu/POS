@@ -13,7 +13,7 @@ public class StaffControl {
 	String mPosition;
 	String mSales;
 	Connection db;
-	public static String mCurrentErrorMessage = "";
+	public String mCurrentErrorMessage = "";
 	static int mStaffId = 1000;
 
 	public StaffControl(POS pos) {
@@ -63,6 +63,13 @@ public class StaffControl {
 			mCurrentErrorMessage = "이미 존재하는 이름입니다.";
 			return res;
 		}
+
+		int strLength = POS.GetStringLength(name);
+		if (strLength > 20) {
+			mCurrentErrorMessage = "글자 수 제한";
+			return res;
+		}
+
 		try {
 			res = -1;
 			String sqlStr = "insert into staff (id, name, position) values(" + (getNextCustomerId()) + ", '" + name

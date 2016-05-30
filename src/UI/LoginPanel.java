@@ -55,12 +55,13 @@ public class LoginPanel implements ActionListener {
 			int id = Integer.parseInt(idInput.getText());
 			int res = mPos.login(name, id);
 			if (res == 1) {
+				JOptionPane.showMessageDialog(null, "로그인 성공", "Info", 2);
 				frame.dispose();
 			} else {
 				JOptionPane.showMessageDialog(null, (String) mPos.mCurrentErrorMessage, "메시지", 2);
 			}
 		} catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(null, (String) "사원번호를 확인하세요 ", "메시지", 2);
+			JOptionPane.showMessageDialog(null, (String) "사원번호를 확인하세요 ", "Error", 2);
 		}
 	}
 }

@@ -26,7 +26,7 @@ public class CustomerControl {
 	Connection db;
 
 	private static int mCustomerId = 1000;
-	public static String mCurrentErrorMessage = "";
+	public String mCurrentErrorMessage = "";
 
 	public CustomerControl(POS pos) {
 		mPos = pos;
@@ -101,6 +101,26 @@ public class CustomerControl {
 			mCurrentErrorMessage = "이미 존재하는 고객입니다.";
 			return res;
 		}
+
+		int strLength = POS.GetStringLength(name);
+		if (strLength > 20 || phone.length() > 20) {
+			mCurrentErrorMessage = "글자 수 제한";
+			return res;
+		}
+		try {
+			Integer.parseInt(birth);
+			Integer.parseInt(phone);
+			if (birth.length() != 4) {
+				throw new Exception();
+			}
+		} catch (NumberFormatException e) {
+			mCurrentErrorMessage = "숫자를 입력하세요.";
+			return res;
+		} catch (Exception e) {
+			mCurrentErrorMessage = "생일은 4자리를 입력하세요.\n ex)5월 7일  -> 0507";
+			return res;
+		}
+
 		try {
 			String sqlStr = "insert into customer (id, name, birth, phone) values(" + (getNextCustomerId()) + ", '"
 					+ name + "','" + birth + "', '" + phone + "')";

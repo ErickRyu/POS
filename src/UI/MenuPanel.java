@@ -32,8 +32,8 @@ public class MenuPanel implements ActionListener {
 				mMenuButton[(i * 10) + j] = new JButton();
 				mMenuButton[(i * 10) + j].setMargin(new Insets(0, 0, 0, 0));
 				mMenuButton[(i * 10) + j].setActionCommand(Integer.toString((i * 10) + j));
-				mMenuButton[(i * 10) + j].setBounds(i * mWidth + i * mBorder + 20, j * mHeight + j * mBorder + 30, mWidth,
-						mHeight);
+				mMenuButton[(i * 10) + j].setBounds(i * mWidth + i * mBorder + 20, j * mHeight + j * mBorder + 30,
+						mWidth, mHeight);
 				panel.add(mMenuButton[(i * 10) + j]);
 				mMenuButton[((i * 10) + j)].addActionListener(this);
 			}

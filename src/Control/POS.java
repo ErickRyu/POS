@@ -4,16 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import Control.CustomerControl.MapUtil;
 import DB.JDBC;
 import UI.POSFrame;
 
@@ -23,7 +14,7 @@ public class POS {
 	/* Save name who login */
 	public String mLoginStaffName;
 	public String mLoginStaffPosition;
-	public static String mCurrentErrorMessage = "";
+	public String mCurrentErrorMessage = "";
 
 	public CustomerControl customerControl;
 	public MenuControl menuControl;
@@ -44,7 +35,7 @@ public class POS {
 
 		db = jdbc.db;
 		new POSFrame(this);
-		
+
 	}
 
 	public int login(String name, int id) {
@@ -79,4 +70,24 @@ public class POS {
 	public boolean isSupervisor() {
 		return mLoginStaffPosition != null && mLoginStaffPosition.equals("Supervisor");
 	}
+
+	public static int GetStringLength(String values) {
+		char[] obj = values.toCharArray(); // 입력 string을 char[]로 변경
+		int maxB = 0; // 바이트 길이를 계산할 변수
+
+		for (int i = 0; i < obj.length; i++) // 루프를 돌면서
+		{
+			// 상위 1바이트를 가져온다.
+			byte oF = (byte) ((obj[i] & 0xff00) >> 8);
+			// 하위 1바이트를 가져온다.
+			// byte oB = (byte) (obj[i] & 0x00ff);
+
+			if (oF == 0) // 상위 1바이트가 0이면 알파벳이다.
+				maxB++;
+			else
+				maxB += 3;
+		}
+		return maxB;
+	}
+
 }

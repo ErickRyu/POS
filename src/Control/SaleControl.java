@@ -15,7 +15,7 @@ import UI.TablePanel;
 public class SaleControl {
 	POS mPos;
 	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	public static String mCurrentErrorMessage = "";
+	public String mCurrentErrorMessage = "";
 	Connection db;
 
 	public SaleControl(POS pos) {
@@ -26,7 +26,7 @@ public class SaleControl {
 	public int searchSales(String searchName) {
 		int res = -1;
 		if (!mPos.isLogin() || !mPos.isSupervisor()) {
-			
+
 			TabbedPane.setSaleResultArea(null);
 			return res;
 		}
@@ -85,8 +85,6 @@ public class SaleControl {
 		}
 		return res;
 	}
-
-	
 
 	public int getTotalPrice(int tableNum) {
 		int res = 0;
@@ -162,9 +160,9 @@ public class SaleControl {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		/* Update customer grade */
-		if(!customerName.equals("비회원"))
+		if (!customerName.equals("비회원"))
 			mPos.customerControl.updateCustomerGrade(customerName);
 
 		/* Update Sales of login staff */
@@ -225,8 +223,9 @@ public class SaleControl {
 				stmt2.executeQuery();
 				stmt2.close();
 			} else {
-				sqlStr = "update orderstatus set sales = sales + 1, total_price = total_price + " + mPos.menuControl.getPrice(menuName)
-						+ " where menu_name='" + menuName + "' and table_num = " + tableNum;
+				sqlStr = "update orderstatus set sales = sales + 1, total_price = total_price + "
+						+ mPos.menuControl.getPrice(menuName) + " where menu_name='" + menuName + "' and table_num = "
+						+ tableNum;
 				PreparedStatement stmt2 = db.prepareStatement(sqlStr);
 				stmt2.executeQuery();
 				stmt2.close();

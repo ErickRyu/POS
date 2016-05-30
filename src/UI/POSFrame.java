@@ -17,7 +17,7 @@ import javax.swing.border.TitledBorder;
 
 import Control.POS;
 
-public class POSFrame implements ActionListener{
+public class POSFrame implements ActionListener {
 	JFrame frame;
 	JPanel posPanel;
 	POS mPos;
@@ -29,15 +29,15 @@ public class POSFrame implements ActionListener{
 	JMenu menu;
 	JMenuItem openItem;
 	public static JMenuItem loginItem;
-	
-	public POSFrame(POS pos){
+
+	public POSFrame(POS pos) {
 		mPos = pos;
-		
+
 		frame = new JFrame();
-		
+
 		posPanel = new JPanel(null);
 		posPanel.setBounds(10, 10, 700, 700);
-		
+
 		tablePanel = new TablePanel(mPos);
 		JPanel tablePane = tablePanel.tablePane();
 		tablePane.setSize(300, 300);
@@ -55,18 +55,33 @@ public class POSFrame implements ActionListener{
 		JTabbedPane tabbedPane = tabbed.createAndShowGUI();
 		tabbedPane.setBounds(330, 300, 350, 390);
 
-		
 		posPanel.add(tablePane);
 		posPanel.add(orderPane);
 		posPanel.add(menuPane);
 		posPanel.add(tabbedPane);
-		
+
 		setMenuBar();
-		
-		
-		JPanel tmpPanel = new JPanel();
-		
-		
+
+		/*
+		 * TODO 상위에 POS이름을 뿌려주는 패널 작성
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 * 
+		 */
+		// JPanel tmpPanel = new JPanel();
+
 		frame.setJMenuBar(menuBar);
 		frame.add(posPanel);
 		frame.setTitle("POS");
@@ -75,7 +90,7 @@ public class POSFrame implements ActionListener{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
-	
+
 	public static JPanel getDefaultPanel(String titleStr) {
 		JPanel panel = new JPanel();
 
@@ -88,8 +103,8 @@ public class POSFrame implements ActionListener{
 		panel.setLayout(null);
 		return panel;
 	}
-	
-	private void setMenuBar(){
+
+	private void setMenuBar() {
 		menu = new JMenu("Menu");
 		menu.setMnemonic(KeyEvent.VK_M);
 		menuBar.add(menu);
@@ -97,32 +112,31 @@ public class POSFrame implements ActionListener{
 		openItem = new JMenuItem("Open", KeyEvent.VK_O);
 		menu.add(openItem);
 		openItem.addActionListener(this);
-		
+
 		loginItem = new JMenuItem("Log in", KeyEvent.VK_L);
 		menu.add(loginItem);
 		loginItem.addActionListener(this);
 	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		if(e.getActionCommand().equals("Open")){
+		if (e.getActionCommand().equals("Open")) {
 			mPos.jdbc.openData();
-		}else if(e.getActionCommand().equals("Log in")){
+		} else if (e.getActionCommand().equals("Log in")) {
 			new LoginPanel(mPos);
-		}else if(e.getActionCommand().equals("Log out")){
+		} else if (e.getActionCommand().equals("Log out")) {
 			mPos.logout();
 			changeLoginButton();
 		}
 	}
-	public static void changeLoginButton(){
-		if(loginItem.getText().equals("Log in")){
+
+	public static void changeLoginButton() {
+		if (loginItem.getText().equals("Log in")) {
 			loginItem.setText("Log out");
-		}else{
+		} else {
 			loginItem.setText("Log in");
 		}
 	}
-	
-	
-	
-	
+
 }

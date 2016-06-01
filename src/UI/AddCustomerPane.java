@@ -70,7 +70,7 @@ public class AddCustomerPane implements ActionListener {
 			String name = nameInput.getText();
 			String birth = birthInput.getText();
 			String phone = phoneInput.getText();
-			int res = mCustomerControl.addCustomer(name, birth, phone);
+			int res = mCustomerControl.addAndCommitCustomer(name, birth, phone);
 
 			if (res == 1) {
 				JOptionPane.showMessageDialog(null, "등록 완료", "Info", 2);

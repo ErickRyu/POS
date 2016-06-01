@@ -66,7 +66,7 @@ public class AddStaffPane implements ActionListener {
 		if (e.getSource() == addButton) {
 			String name = nameInput.getText();
 			String position = positionInput.getSelectedItem().toString();
-			int res = mStaffControl.addStaffDB(name, position);
+			int res = mStaffControl.addAndCommitStaff(name, position);
 			if (res == 1) {
 				JOptionPane.showMessageDialog(null, "등록완료", "Info", 2);
 				frame.dispose();

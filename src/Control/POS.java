@@ -9,8 +9,6 @@ import DB.JDBC;
 import UI.POSFrame;
 
 public class POS {
-	// member 변수 앞에는 m을 붙이는 것.
-
 	/* Save name who login */
 	public String mLoginStaffName;
 	public String mLoginStaffPosition;

@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
@@ -58,7 +59,6 @@ public class POSFrame implements ActionListener {
 		JPanel orderPane = orderPanel.orderPane();
 		orderPane.setBounds(330, 10, 350, 245);
 
-		/* Reduce 25 */
 		/* Set menu panel */
 		menuPanel = new MenuPanel(mPos);
 		JPanel menuPane = menuPanel.menuPane();
@@ -133,12 +133,13 @@ public class POSFrame implements ActionListener {
 
 		        if (returnVal == JFileChooser.APPROVE_OPTION) {
 		            File file = fc.getSelectedFile();
-		            mPos.jdbc.openData(file);
+		            int res = mPos.jdbc.openData(file);
+		            if(res == -1){
+		            	JOptionPane.showMessageDialog(null,mPos.jdbc.mCurrentErrorMessage, "Error", 2);
+		            }
 		        } else {
 		        }
 		   } 
-			
-			
 		} else if (e.getActionCommand().equals("Log in")) {
 			new LoginPanel(mPos);
 		} else if (e.getActionCommand().equals("Log out")) {

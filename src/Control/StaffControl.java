@@ -56,8 +56,44 @@ public class StaffControl {
 		}
 	}
 
-	public int addStaffDB(String name, String position) {
-		int res = searchStaff(name);
+	public int addStaff(String name, String position) {
+		int res = -1;
+		
+		res = validCheck(name);
+		
+		if(res == -1)	return res;
+		
+		try {
+			res = -1;
+			String sqlStr = "insert into staff (id, name, position) values(" + (getNextStaffId()) + ", '" + name
+					+ "','" + position + "')";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			rs.close();
+			stmt.close();
+			res = 1;
+
+		} catch (SQLException e) {
+			mCurrentErrorMessage = "다시 입력하세요.";
+		}
+		return res;
+	}
+	public int addAndCommitStaff(String name, String position){
+		int res = -1;
+		res = addStaff(name, position);
+		if(res == -1) return res;
+		
+		try{
+			db.commit();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		return res;
+	}
+	
+	public int validCheck(String name){
+		int res = -1;
 		if (searchStaff(name) == 1) {
 			res = -1;
 			mCurrentErrorMessage = "이미 존재하는 이름입니다.";
@@ -69,25 +105,25 @@ public class StaffControl {
 			mCurrentErrorMessage = "글자 수 제한";
 			return res;
 		}
-
-		try {
-			res = -1;
-			String sqlStr = "insert into staff (id, name, position) values(" + (getNextCustomerId()) + ", '" + name
-					+ "','" + position + "')";
-			PreparedStatement stmt = db.prepareStatement(sqlStr);
-			ResultSet rs = stmt.executeQuery();
-			rs.close();
-			stmt.close();
-			db.commit();
-			res = 1;
-
-		} catch (SQLException e) {
-			mCurrentErrorMessage = "다시 입력하세요.";
-		}
+		res = 1;
 		return res;
 	}
 
-	public int getNextCustomerId() {
-		return mStaffId++;
+
+	public int getNextStaffId() {
+		int nextId = mStaffId;
+		try{
+			String sqlStr = "select count(name) from staff";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			rs.next();
+			int count = rs.getInt("count(name)");
+			nextId = mStaffId + count;
+			rs.close();
+			stmt.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return nextId;
 	}
 }

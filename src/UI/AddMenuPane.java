@@ -75,9 +75,10 @@ public class AddMenuPane implements ActionListener {
 				}
 				
 				
-				int res = mMenuControl.addMenuDB(name, price);
+				int res = mMenuControl.addAndCommitMenu(name, price);
 				if (res == 1) {
 					JOptionPane.showMessageDialog(null, "등록완료", "Info", 2);
+					mMenuControl.addMenuButton();
 					frame.dispose();
 				} else {
 					throw new Exception(mMenuControl.mCurrentErrorMessage);

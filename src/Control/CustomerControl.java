@@ -72,33 +72,52 @@ public class CustomerControl {
 		}
 	}
 
-	public String getCustomerName(String customerName) {
-		try {
-			if (customerName.equals("")) {
-				return "비회원";
-			}
-			String sqlStr = "select name from customer where name = '" + customerName + "'";
-			PreparedStatement stmt = db.prepareStatement(sqlStr);
-			ResultSet rs = stmt.executeQuery();
-
-			rs.next();
-			String eq = rs.getString("name");
-
-			if (!eq.equals(customerName)) {
-				customerName = "비회원";
-			}
-			rs.close();
-			stmt.close();
-		} catch (SQLException e) {
-			customerName = "비회원";
-		}
-		return customerName;
+	public int addCustomer(String name, String birth, String phone) {
+		return addCustomer(name, birth, phone, "Normal");
 	}
 
-	public int addCustomer(String name, String birth, String phone) {
+	public int addCustomer(String name, String birth, String phone, String grade) {
+		int res = -1;
+		
+		res = vaildCheck(name, birth, phone);
+		if(res == -1) return res;
+		res = -1;
+		
+		try {
+			int totalPurchase = getThreshold(grade);
+			String sqlStr = "insert into customer values(" + (getNextCustomerId()) + ", '" + name + "', '" + birth + "', '"
+					+ phone + "', '" + grade + "', " + totalPurchase + ")";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			stmt.executeQuery();
+			stmt.close();
+			res = 1;
+		} catch (SQLException e) {
+			mCurrentErrorMessage = "다시 입력하세요.";
+		}
+		return res;
+	}
+	
+	public int addAndCommitCustomer(String name, String birth, String phone){
+		return addAndCommitCustomer(name, birth, phone, "Normal");
+	}
+	
+	public int addAndCommitCustomer(String name, String birth, String phone, String grade){
+		int res = -1;
+		res = addCustomer(name, birth, phone, grade);
+		if(res == -1) return res;
+		try{
+			db.commit();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
+	public int vaildCheck(String name, String birth, String phone){
 		int res = -1;
 		if (searchCustomer(name) == 1) {
 			mCurrentErrorMessage = "이미 존재하는 고객입니다.";
+			res = -1;
 			return res;
 		}
 
@@ -120,44 +139,52 @@ public class CustomerControl {
 			mCurrentErrorMessage = "생일은 4자리를 입력하세요.\n ex)5월 7일  -> 0507";
 			return res;
 		}
-
-		try {
-			String sqlStr = "insert into customer (id, name, birth, phone) values(" + (getNextCustomerId()) + ", '"
-					+ name + "','" + birth + "', '" + phone + "')";
-			PreparedStatement stmt = db.prepareStatement(sqlStr);
-			ResultSet rs = stmt.executeQuery();
-			rs.close();
-			stmt.close();
-
-			db.commit();
-			res = 1;
-		} catch (SQLException e) {
-			mCurrentErrorMessage = "다시 입력하세요.";
-		}
+		res = 1;
+		
 		return res;
-	}
-
-	public int addCustomer(String name, String birth, String phone, String grade) throws SQLException {
-		int res = -1;
+	}	
+	
+	public int getThreshold(String grade) {
+		int threshold = 0;
 		try {
 			String sqlStr = "select threshold from grade where grade_name = '" + grade + "'";
 			PreparedStatement stmt = db.prepareStatement(sqlStr);
 			ResultSet rs = stmt.executeQuery();
 
 			rs.next();
-			int totalPurchase = rs.getInt("threshold");
+			threshold = rs.getInt("threshold");
 			rs.close();
-
-			sqlStr = "insert into customer values(" + (getNextCustomerId()) + ", '" + name + "', '" + birth + "', '"
-					+ phone + "', '" + grade + "', " + totalPurchase + ")";
-			stmt = db.prepareStatement(sqlStr);
-			stmt.executeQuery();
 			stmt.close();
-			db.commit();
 		} catch (SQLException e) {
 
 		}
-		return res;
+		return threshold;
+	}
+
+	/*
+	 * If parameter is valid customer name, return original. If not, return 비회원
+	 */
+	public String getCustomerName(String customerName) {
+		try {
+			if (customerName.equals("")) {
+				return "비회원";
+			}
+			String sqlStr = "select name from customer where name = '" + customerName + "'";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+
+			rs.next();
+			String eq = rs.getString("name");
+
+			if (!eq.equals(customerName)) {
+				customerName = "비회원";
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			customerName = "비회원";
+		}
+		return customerName;
 	}
 
 	public int updateCustomerGrade(String customerName) {
@@ -182,7 +209,8 @@ public class CustomerControl {
 			String sqlStr = "select * from grade";
 			PreparedStatement stmt = db.prepareStatement(sqlStr);
 			ResultSet rs = stmt.executeQuery();
-			/* */
+
+			/* Save grade and threshold with ascending order */
 			Map<String, Integer> gradeMap = new HashMap<>();
 			while (rs.next()) {
 				String gradeName = rs.getString("grade_name");
@@ -190,11 +218,12 @@ public class CustomerControl {
 				gradeMap.put(gradeName, threshold);
 			}
 			gradeMap = MapUtil.sortByValue(gradeMap);
+
+			/* update grade */
 			for (Entry<String, Integer> entry : gradeMap.entrySet()) {
 				String checkGrade = entry.getKey();
 				int checkThreshold = entry.getValue();
 				if (checkThreshold < totalPurchase) {
-					// update and return;
 					sqlStr = "update customer set grade='" + checkGrade + "' where name='" + customerName + "'";
 					stmt = db.prepareStatement(sqlStr);
 					stmt.executeQuery();
@@ -208,6 +237,7 @@ public class CustomerControl {
 		return res;
 	}
 
+	/* Common sorting map method using it's values */
 	public static class MapUtil {
 		public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
 			List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(map.entrySet());
@@ -226,6 +256,19 @@ public class CustomerControl {
 	}
 
 	public int getNextCustomerId() {
-		return mCustomerId++;
+		int nextId = mCustomerId;
+		try{
+			String sqlStr = "select count(name) from customer";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			rs.next();
+			int count = rs.getInt("count(name)");
+			nextId = mCustomerId + count;
+			rs.close();
+			stmt.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return nextId;
 	}
 }

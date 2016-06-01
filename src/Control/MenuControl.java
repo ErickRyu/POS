@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import UI.MenuPanel;
 import UI.TabbedPane;
@@ -16,10 +19,11 @@ public class MenuControl {
 	String mCumulitive;
 	static int mMenuId = 1000;
 	public String mCurrentErrorMessage = "";
-
+	Map<Integer, String> toAddMenuMap;
 	public MenuControl(POS pos) {
 		mPos = pos;
 		db = mPos.jdbc.db;
+		toAddMenuMap = new HashMap<>();
 	}
 
 	public int searchMenu(String searchName) {
@@ -57,15 +61,49 @@ public class MenuControl {
 		}
 	}
 
-	public int addMenuDB(String name, int price) {
+	public int addMenu(String name, int price){
 		int res = -1;
+		int menuNum = countMenuNum();
+		res = validCheck(name, price, menuNum);
+		if(res == -1) return res;
+		
+		try {
+			String sqlStr = "insert into menu (id, name, price) values(" + getNextMenuId() + ", '" + name + "'," + price
+					+ ")";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
 
+			rs.close();
+			stmt.close();
+			
+			/* add menu to menuMap*/
+			toAddMenuMap.put(menuNum, name);
+			res = 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			mCurrentErrorMessage = "다시 입력하세요.";
+		}
+		return res;
+	}
+	
+	public int addAndCommitMenu(String name, int price){
+		int res = -1;
+		try{
+			res = addMenu(name, price);
+			db.commit();
+		}catch(SQLException e){
+			
+		}
+		return res;
+	}
+	
+	public int validCheck(String name, int price, int menuNum){
+		int res = -1;
 		if (searchMenu(name) == 1) {
 			mCurrentErrorMessage = "존재하는 이름입니다.";
 			return res;
 		}
 
-		int menuNum = countMenuNum();
 		if (menuNum >= 20) {
 			mCurrentErrorMessage = "20개 이상 등록할 수 없습니다.";
 			return res;
@@ -76,22 +114,7 @@ public class MenuControl {
 			mCurrentErrorMessage = "글자 수 제한";
 			return res;
 		}
-
-		try {
-			String sqlStr = "insert into menu (id, name, price) values(" + getNextMenuId() + ", '" + name + "'," + price
-					+ ")";
-			PreparedStatement stmt = db.prepareStatement(sqlStr);
-			ResultSet rs = stmt.executeQuery();
-
-			rs.close();
-			stmt.close();
-			db.commit();
-			MenuPanel.setButtonName(menuNum, name);
-			res = 1;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			mCurrentErrorMessage = "다시 입력하세요.";
-		}
+		res = 1;
 		return res;
 	}
 
@@ -150,8 +173,29 @@ public class MenuControl {
 		}
 		return res;
 	}
+	public void addMenuButton(){
+		for(Entry<Integer, String> entry : toAddMenuMap.entrySet()){
+			int menuNum = entry.getKey();
+			String name = entry.getValue();
+			MenuPanel.setButtonName(menuNum, name);
+		}
+		toAddMenuMap.clear();
+	}
 
 	public int getNextMenuId() {
-		return mMenuId++;
+		int nextId = mMenuId;
+		try{
+			String sqlStr = "select count(name) from menu";
+			PreparedStatement stmt = db.prepareStatement(sqlStr);
+			ResultSet rs = stmt.executeQuery();
+			rs.next();
+			int count = rs.getInt("count(name)");
+			nextId = mMenuId + count;
+			rs.close();
+			stmt.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return nextId;
 	}
 }

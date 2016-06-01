@@ -17,7 +17,7 @@ public class JDBC {
 	public Connection db;
 	private String username = "system";
 	private String password = "system";
-
+	public static String mCurrentErrorMessage = "";
 	POS mPos;
 
 	public JDBC(POS pos) {
@@ -73,12 +73,14 @@ public class JDBC {
 				sqlStr = sc.nextLine();
 				executeQuery(sqlStr);
 			}
+			
 			/* Initiate grade */
 			sc = new Scanner(new FileReader("grade.sql"));
 			while (sc.hasNext()) {
 				sqlStr = sc.nextLine();
 				executeQuery(sqlStr);
 			}
+			db.commit();
 			sc.close();
 		} catch (SQLException e) {
 			System.out.println("CreateTable " + e);
@@ -88,11 +90,12 @@ public class JDBC {
 		}
 	}
 	
-	public void openData(File file) {
+	public int openData(File file) {
+		int res = -1;
 		try {
-
 			Scanner sc = new Scanner(new FileReader(file));
 			int customerNum = sc.nextInt();
+			// 추가 실패할 경우 id 다시 줄이는 것 만들기.
 			while (customerNum > 0) {
 				String name = sc.next();
 				String birth = sc.next();
@@ -107,7 +110,7 @@ public class JDBC {
 				String name = sc.next();
 				String position = sc.next();
 
-				mPos.staffControl.addStaffDB(name, position);
+				mPos.staffControl.addStaff(name, position);
 				staffNum--;
 			}
 
@@ -116,20 +119,29 @@ public class JDBC {
 				String name = sc.next();
 				int price = sc.nextInt();
 
-				mPos.menuControl.addMenuDB(name, price);
-				MenuPanel.setButtonName(i, name);
+				mPos.menuControl.addMenu(name, price);
 			}
+			
 			db.commit();
-
+			// execute add menu map
+			mPos.menuControl.addMenuButton();
 			sc.close();
-		} catch (SQLException e) {
-			System.out.println("ReadData : SQLException " + e);
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
+			res = 1;
+		} catch(Exception e){
+			rollBack();
+			mCurrentErrorMessage = "데이터 파일을 확인해주세요.";
+		}
+		return res;
+	}
+
+	public void rollBack(){
+		try{
+			db.rollback();
+		}catch(SQLException e){
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void executeQuery(String sqlStr) throws SQLException {
 		PreparedStatement stmt = db.prepareStatement(sqlStr);
 		stmt.executeQuery();

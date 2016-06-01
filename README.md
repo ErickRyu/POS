@@ -2,7 +2,8 @@ POS
 
 ToDo<br>
 1. Database schema 변경<br>
-2. Error 날만한 상황들 모두 정리 후 테스트
+2. Error 날만한 상황들 모두 정리 후 테스트<br>
+3. POS, JDBC class -> singletone pattern적용하기
 
 
 <b>중간 회고</b>

@@ -85,6 +85,7 @@ public class OrderPanel implements ActionListener {
 			if (isLogin()) {
 				TablePanel.setTableColorWhite(tableNum);
 				mPos.saleControl.deleteOrder(tableNum);
+				setResultArea(null);
 			}
 		} else if (e.getSource() == purchaseButton) {
 			if (isLogin()) {

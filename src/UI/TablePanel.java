@@ -30,6 +30,7 @@ public class TablePanel implements ActionListener {
 		panel.setLayout(null);
 		tableButton = new JButton[20];
 
+		
 		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
 		TitledBorder title = BorderFactory.createTitledBorder(loweredbevel, "테이블 현황");
 		title.setTitlePosition(TitledBorder.ABOVE_TOP);
@@ -63,5 +64,8 @@ public class TablePanel implements ActionListener {
 
 	public static void setTableColorYellow(int tableNum) {
 		tableButton[tableNum - 1].setBackground(Color.yellow);
+	}
+	public static Color getTableColor(int tableNum){
+		return tableButton[tableNum -1].getBackground();
 	}
 }

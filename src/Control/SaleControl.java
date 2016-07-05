@@ -1,5 +1,6 @@
 package Control;
 
+import java.awt.Color;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,7 +26,9 @@ public class SaleControl {
 
 	public int searchSales(String searchName) {
 		int res = -1;
-		if (!mPos.isLogin() && !mPos.isSupervisor()) {
+		if (!mPos.isLogin() || !mPos.isSupervisor()) {
+			
+			TabbedPane.setSaleResultArea(null);
 			return res;
 		}
 		try {
@@ -192,20 +195,31 @@ public class SaleControl {
 				+ customerName + "'";
 		try {
 			PreparedStatement stmt = db.prepareStatement(sqlStr);
-			ResultSet rs = stmt.executeQuery();
-			rs.close();
+			stmt.executeQuery();
 			stmt.close();
 			commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		/*TODO
+		 * Update customer grade
+		 * 
+		 *
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
 
 		/* Update Sales of login staff */
 		sqlStr = "update staff " + "set sales = sales + " + totalSale + "where name = '" + mPos.mLoginStaffName + "'";
 		try {
 			PreparedStatement stmt = db.prepareStatement(sqlStr);
-			ResultSet rs = stmt.executeQuery();
-			rs.close();
+			stmt.executeQuery();
 			stmt.close();
 			commit();
 		} catch (SQLException e) {
@@ -221,7 +235,6 @@ public class SaleControl {
 	public float getDiscountRate(String customerName) {
 		float res = 1f;
 		try {
-			System.out.println(customerName);
 			String sqlStr = "select discount from grade where grade_name = (select grade from customer where name='"
 					+ customerName + "')";
 			PreparedStatement stmt = db.prepareStatement(sqlStr);

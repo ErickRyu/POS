@@ -86,11 +86,21 @@ public class OrderPanel implements ActionListener {
 			}
 		} else if (e.getSource() == purchaseButton) {
 			if (isLogin()) {
-				String customerName = customerNameField.getText();
-				mPos.saleControl.purchase(tableNum, customerName);
+				if (isOrdered(tableNum)) {
+					String customerName = customerNameField.getText();
+					mPos.saleControl.purchase(tableNum, customerName);
+				}
 			}
 		}
 
+	}
+
+	public boolean isOrdered(int tableNum) {
+		boolean isOrdered = TablePanel.getTableColor(tableNum) == Color.yellow;
+		if (!isOrdered) {
+			JOptionPane.showMessageDialog(null, (String) "주문을 확인하세요.", "메시지", 2);
+		}
+		return isOrdered;
 	}
 
 	public boolean isLogin() {

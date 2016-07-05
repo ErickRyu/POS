@@ -25,13 +25,6 @@ public class POS {
 
 	Connection db;
 
-	/*
-	 * TODO 고객 등록시 번호 입력에 대한 조건 주기 번호 4자리가 아닐 경우에러 발생 <- 패널에서 처리하기
-	 * 
-	 * 주문한 테이블만 결제가 가능하도록 변경할것
-	 * 
-	 * 슈퍼바이저에게만 매출이 보이도록
-	 */
 	public POS() {
 		jdbc = new JDBC(this);
 

@@ -115,4 +115,8 @@ public class POSFrame implements ActionListener{
 			loginItem.setText("Log in");
 		}
 	}
+	
+	
+	
+	
 }

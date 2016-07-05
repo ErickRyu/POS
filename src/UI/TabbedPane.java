@@ -3,8 +3,6 @@ package UI;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,6 +20,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import Control.CustomerControl;
 import Control.MenuControl;
@@ -88,7 +88,19 @@ public class TabbedPane extends JPanel implements ActionListener {
 
 		add(tabbedPane);
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-
+		ChangeListener changeListener = new ChangeListener() {
+			public void stateChanged(ChangeEvent changeEvent) {
+				setCustomerResultArea(null);
+				setMenuResultArea(null);
+				setStaffResultArea(null);
+				setSaleResultArea(null);
+				customerNameField.setText(null);
+				mMenuNameField.setText(null);
+				mStaffNameField.setText(null);
+				
+			}
+		};
+		tabbedPane.addChangeListener(changeListener);
 		return tabbedPane;
 	}
 
@@ -102,6 +114,10 @@ public class TabbedPane extends JPanel implements ActionListener {
 
 	public static void setStaffResultArea(String result) {
 		mStaffResultArea.setText(result);
+	}
+
+	public static void setSaleResultArea(String result) {
+		mSaleResultArea.setText(result);
 	}
 
 	protected JComponent customerPane() {
@@ -150,7 +166,7 @@ public class TabbedPane extends JPanel implements ActionListener {
 		JLabel name_label = new JLabel("기간");
 		name_label.setBounds(10, 40, 80, 30);
 		check_box.setBounds(60, 40, 110, 30);
-		check_box.addItemListener(new ItemChangeListener());
+		check_box.addActionListener(this);
 		scroll.setBounds(10, 80, 330, 240);
 
 		panel.add(name_label);
@@ -158,10 +174,6 @@ public class TabbedPane extends JPanel implements ActionListener {
 		panel.add(scroll);
 
 		return panel;
-	}
-
-	public static void setSaleResultArea(String result) {
-		mSaleResultArea.setText(result);
 	}
 
 	public static void updateSaleTabBox() {
@@ -264,6 +276,11 @@ public class TabbedPane extends JPanel implements ActionListener {
 			String name = mMenuNameField.getText();
 			if (isLogin())
 				menuControl.searchAndShowMenu(name);
+		} else if (e.getSource() == check_box) {
+			setSaleResultArea(null);
+			String date = (String) check_box.getSelectedItem();
+			if (date != null)
+				saleControl.searchSales(date);
 		}
 	}
 
@@ -282,15 +299,5 @@ public class TabbedPane extends JPanel implements ActionListener {
 		if (!res)
 			JOptionPane.showMessageDialog(null, (String) "Supervisor만 등록이 가능합니다.", "메시지", 2);
 		return res;
-	}
-
-	class ItemChangeListener implements ItemListener {
-		@Override
-		public void itemStateChanged(ItemEvent event) {
-			if (event.getStateChange() == ItemEvent.SELECTED) {
-				String date = (String) check_box.getSelectedItem();
-				saleControl.searchSales(date);
-			}
-		}
 	}
 }
